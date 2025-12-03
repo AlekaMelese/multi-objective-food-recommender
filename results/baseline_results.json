@@ -1,0 +1,26 @@
+{
+  "model_type": "NMF (Non-negative Matrix Factorization)",
+  "objective": "Rating prediction only (preference)",
+  "parameters": {
+    "n_components": 20,
+    "max_iter": 200,
+    "random_state": 42
+  },
+  "training_time_seconds": 3.9773178100585938,
+  "validation_metrics": {
+    "RMSE": 3.6706725136598775,
+    "MAE": 3.568990295444854
+  },
+  "test_metrics": {
+    "RMSE": 3.6491037455594104,
+    "MAE": 3.534221963981647
+  },
+  "dataset_info": {
+    "train_size": 22792,
+    "val_size": 2849,
+    "test_size": 2850,
+    "num_users": 17208,
+    "num_recipes": 281,
+    "matrix_sparsity": 0.9952864760411031
+  }
+}

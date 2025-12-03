@@ -1,0 +1,44 @@
+Project 1: Multi-Objective Food Recommendation Balancing User Preference and Healthiness
+Goal and Motivation
+Traditional recommender systems optimize only for user preference, which may unintentionally promote foods high in sugar, salt, and unhealthy fats. This project develops a multi-objective recommender that simultaneously optimizes:
+•User taste preference
+•WHO-aligned health score (who_score)
+This project strengthens understanding of responsible personalization in the context of chronic disease prevention and sustainable, long-term well-being.
+Dataset Description (HUMMUS)
+You will use:
+•Recipe Metadata File: Contains nutritional features, health category, ingredients, etc.
+•User Interaction File: (member_id, recipe_id, rating) user ratings.
+Key nutritional fields: totalFat, saturatedFat, sugars, sodium, protein, calories, who_score This enables computing explicit health-awareness objectives.
+Assigned Tasks / Workflow
+1. Data Preprocessing
+•Remove recipes missing nutritional or rating information.
+•Normalize ratings and health scores.
+•Split into train/validation/test (time-aware or random split; justify your choice).
+•Compute user average health preference baseline.
+2. Model Development
+Implement two models:
+1.Baseline: Matrix Factorization / SVD or a Neural Collaborative Filtering (NCF) model optimized for rating prediction.
+2.Multi-Objective Model: Combine preference score P(𝑢,𝑖) with health score H(i) Example trade-off function:
+𝑆𝑐𝑜𝑟𝑒(𝑢,𝑖)=𝛼⋅𝑃(𝑢,𝑖)+(1−𝛼)⋅𝐻(𝑖)
+Experiment with multiple α values (e.g., 0.0 → 1.0).
+3. Evaluation
+Evaluate trade-offs:
+•Recommendation Quality: Precision, Recall
+•Healthfulness of recommendations: Avg. who_score_normalized of Top-K
+•Generate a Pareto curve demonstrating trade-offs.
+4. Responsible AI Analysis
+•Discuss risks of nudging behavior (over-restriction vs. freedom of choice).
+•Describe how personalization fairness varies across dietary preference groups.
+Expected Deliverables
+•Python code & environment file
+•Performance comparison tables and Pareto-front visualizations
+•Short report (3–4 pages):
+oModel description & results
+oInterpretation of trade-offs
+oDiscussion on ethical implications of health nudging
+Evaluation Criteria                
+Dimension                 Weight Description
+Technical correctness     30% Robust implementation and model soundness
+Multi-objective evaluation quality 20% Depth of trade-off experiments and interpretation
+Scientific reasoning      20% Ability to justify modeling decisions and results
+Presentation & clarity     30%       Report structure and visualization quality

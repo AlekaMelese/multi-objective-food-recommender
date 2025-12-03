@@ -1,0 +1,75 @@
+{
+  "user_id": 1036472,
+  "top_10_predictions": [
+    {
+      "recipe_id": 113861,
+      "predicted_rating": 1.0,
+      "title": "My Own Cube Steak and Gravy",
+      "health_score": 0.7176780334675071,
+      "calories": 500.5
+    },
+    {
+      "recipe_id": 111212,
+      "predicted_rating": 1.0,
+      "title": "Our Secret Sirloin Steak",
+      "health_score": 0.4753426426578176,
+      "calories": 823.6
+    },
+    {
+      "recipe_id": 497021,
+      "predicted_rating": 1.0,
+      "title": "Mile-High Cabbage Pie #5FIX",
+      "health_score": 0.7172512213834529,
+      "calories": 803.0
+    },
+    {
+      "recipe_id": 31184,
+      "predicted_rating": 1.0,
+      "title": "15 Minute Shrimp Scampi",
+      "health_score": 0.4236784926440098,
+      "calories": 596.2
+    },
+    {
+      "recipe_id": 71739,
+      "predicted_rating": 1.0,
+      "title": "Easy Garlic Rice",
+      "health_score": 0.5823185607358271,
+      "calories": 264.2
+    },
+    {
+      "recipe_id": 117281,
+      "predicted_rating": 1.0,
+      "title": "Kittencal's Hamburger/Burger Buns",
+      "health_score": 0.4930820813173755,
+      "calories": 206.3
+    },
+    {
+      "recipe_id": 11194,
+      "predicted_rating": 1.0,
+      "title": "Latkes (Potato Pancakes)",
+      "health_score": 0.6756854256854256,
+      "calories": 131.9
+    },
+    {
+      "recipe_id": 92136,
+      "predicted_rating": 1.0,
+      "title": "Kids Love S'mores Pops!!",
+      "health_score": 0.8374925727866905,
+      "calories": 277.1
+    },
+    {
+      "recipe_id": 11630,
+      "predicted_rating": 1.0,
+      "title": "Awful Potatoes",
+      "health_score": 0.5291005291005292,
+      "calories": 612.6
+    },
+    {
+      "recipe_id": 146022,
+      "predicted_rating": 1.0,
+      "title": "Polish Appetizer",
+      "health_score": 0.2345679012345679,
+      "calories": 364.9
+    }
+  ]
+}
