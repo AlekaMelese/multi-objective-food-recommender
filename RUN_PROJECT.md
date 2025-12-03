@@ -147,27 +147,9 @@ After running all steps, you should have:
 ### Visualizations (`plots/` folder)
 - `pareto_curve.png`
 - `alpha_comparison.png`
-- `health_improvement.png`
+- `precision_recall_analysis.png`
 
 ---
 
-## Troubleshooting
 
-### Issue: "No module named 'surprise'"
-**Solution:**
-```bash
-pip install scikit-surprise
-```
-
-### Issue: "FileNotFoundError: data/train_ratings.csv"
-**Solution:** Run step 2 first to prepare the data
-```bash
-
-python 2_prepare_data.py
-```
-
-### Issue: Models taking too long
-**Solution:** Reduce epochs in the code or use smaller parameter grid
-
----
 
