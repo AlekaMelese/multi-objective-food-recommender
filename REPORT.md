@@ -114,6 +114,7 @@ Where:
 
 
 **Healthfulness**:
+
 6. **Avg Health Score (Top-10)**: Average WHO health score of Top-10 recommended recipes (higher is better)
 
 ---
