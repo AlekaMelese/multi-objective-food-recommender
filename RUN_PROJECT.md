@@ -16,8 +16,7 @@ Project 2/
 
 ### Step 1: Data Exploration
 ```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2"
-/scratch/aayalew25/Aleka/alekapy/bin/python 1_explore_data.py
+python 1_explore_data.py
 ```
 **Output:** Console output showing dataset statistics
 
@@ -25,8 +24,8 @@ cd "/scratch/aayalew25/Food/FoodNew/Project 2"
 
 ### Step 2: Data Preparation
 ```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2"
-/scratch/aayalew25/Aleka/alekapy/bin/python 2_prepare_data.py
+
+python 2_prepare_data.py
 ```
 **Output:**
 - `data/recipes.csv` - 281 recipes with nutritional data
@@ -39,8 +38,8 @@ cd "/scratch/aayalew25/Food/FoodNew/Project 2"
 
 ### Step 3: Baseline Model (SVD - Preference Only)
 ```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
-/scratch/aayalew25/Aleka/alekapy/bin/python 3_baseline_model.py
+
+python 3_baseline_model.py
 ```
 **Output:**
 - `models/baseline_svd.pkl` - Trained baseline model
@@ -57,8 +56,8 @@ cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
 
 ### Step 4: Multi-Objective Model (Preference + Health)
 ```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
-/scratch/aayalew25/Aleka/alekapy/bin/python 4_multiobjective_model.py
+
+python 4_multiobjective_model.py
 ```
 **Output:**
 - `models/multiobjective_*.pkl` - Models for different α values
@@ -74,8 +73,8 @@ cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
 
 ### Step 5: Evaluation & Visualization
 ```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
-/scratch/aayalew25/Aleka/alekapy/bin/python 5_evaluate_visualize.py
+
+python 5_evaluate_visualize.py
 ```
 **Output:**
 - `plots/pareto_curve.png` - Trade-off visualization
@@ -92,8 +91,8 @@ cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
 
 ### Step 6: Top-K Evaluation (Precision, Recall, Health)
 ```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
-/scratch/aayalew25/Aleka/alekapy/bin/python 6_topk_evaluation.py
+
+python 6_topk_evaluation.py
 ```
 **Output:**
 - `results/topk_evaluation.json` - Precision@10, Recall@10, F1-Score, Avg Health (Top-10)
@@ -110,10 +109,10 @@ cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
 cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
 
 # Run all steps sequentially
-/scratch/aayalew25/Aleka/alekapy/bin/python 3_baseline_model_sklearn.py && \
-/scratch/aayalew25/Aleka/alekapy/bin/python 4_multiobjective_model.py && \
-/scratch/aayalew25/Aleka/alekapy/bin/python 5_evaluate_visualize.py && \
-/scratch/aayalew25/Aleka/alekapy/bin/python 6_topk_evaluation.py
+python 3_baseline_model_sklearn.py && \
+python 4_multiobjective_model.py && \
+python 5_evaluate_visualize.py && \
+python 6_topk_evaluation.py
 ```
 
 ---
@@ -163,8 +162,8 @@ After running all steps, you should have:
 ### Issue: "FileNotFoundError: data/train_ratings.csv"
 **Solution:** Run step 2 first to prepare the data
 ```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2"
-/scratch/aayalew25/Aleka/alekapy/bin/python 2_prepare_data.py
+
+python 2_prepare_data.py
 ```
 
 ### Issue: Models taking too long
