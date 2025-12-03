@@ -156,7 +156,7 @@ After running all steps, you should have:
 ### Issue: "No module named 'surprise'"
 **Solution:**
 ```bash
-/scratch/aayalew25/Aleka/alekapy/bin/pip install scikit-surprise
+pip install scikit-surprise
 ```
 
 ### Issue: "FileNotFoundError: data/train_ratings.csv"
