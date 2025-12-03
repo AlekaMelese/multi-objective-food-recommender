@@ -5,10 +5,8 @@ Balancing User Preference and Health in Recipe Recommendations
 ## Quick Start
 
 ### 1. Run Baseline Model (Preference Only)
-```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
-/scratch/aayalew25/Aleka/alekapy/bin/python 3_baseline_model.py
-```
+
+
 
 This trains a Matrix Factorization (SVD) model that **optimizes only for user ratings**.
 
@@ -86,15 +84,9 @@ See [RUN_PROJECT.md](RUN_PROJECT.md) for complete terminal commands and explanat
 
 **Key Finding:** As preference weight increases (α→1.0), RMSE increases, showing the trade-off between user preference accuracy and health optimization.
 
-✅ **Generated Visualizations**
+✅ **Visualizations**
 - Pareto curve showing preference vs health trade-off
 - Alpha comparison plots
 
 ---
 
-## Questions?
-
-Check RUN_PROJECT.md for:
-- Detailed command-by-command instructions
-- Expected outputs for each step
-- Troubleshooting tips
