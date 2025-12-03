@@ -272,19 +272,6 @@ The fairness of health-based recommendations varies significantly across user po
 - Transparently display why each recipe is recommended (preference vs. health contribution)
 - Monitor fairness metrics across demographic groups
 
-### 4.4 Limitations
-
-1. **Health Score Simplification**: WHO scores are unidimensional; real health is multifaceted (allergies, medical conditions, cultural preferences)
-
-2. **Static α**: We use fixed α values; dynamic α based on user context (meal time, recent eating patterns) could be more effective
-
-3. **Cold Start Problem**: New users/recipes lack rating history; health scores can serve as content-based fallback
-
-4. **Evaluation Methodology**: Our test set evaluation shows constant health scores across α values because we're evaluating on fixed user-recipe pairs. In production, different α values would generate different recommendation lists with varying health profiles.
-
-5. **Small Dataset**: 281 recipes limits generalization; larger datasets would provide more robust results
-
----
 
 ## 5. Conclusion
 
@@ -297,14 +284,6 @@ This project successfully demonstrates the implementation and evaluation of a mu
 3. **Ethical Analysis**: Identified key tensions between system-driven health nudging and user autonomy
 
 4. **Practical Framework**: Provided actionable approach for deploying health-aware recommendation systems with user control
-
-### Future Work
-
-1. **Dynamic α Adjustment**: Learn optimal α per user based on engagement and health outcomes
-2. **Constraint-Based Approach**: Set minimum health thresholds while maximizing preference
-3. **Multi-Stakeholder Optimization**: Include system objectives (engagement, revenue) alongside user preference and health
-4. **Long-Term Evaluation**: Study how recommendations affect user eating patterns over time
-5. **Cultural Sensitivity**: Incorporate diverse dietary guidelines beyond WHO standards
 
 **Final Recommendation**: Deploy with α = 0.5 as default, allowing users to adjust based on personal priorities, with clear transparency about health optimization goals.
 
