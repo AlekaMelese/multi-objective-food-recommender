@@ -52,9 +52,10 @@ Split: 80% train, 10% validation, 10% test
 
 - ✅ Data exploration (Step 1)
 - ✅ Data preparation (Step 2)
-- ✅ Baseline model (Step 3)
+- ✅ Baseline model (Step 3 - NMF)
 - ✅ Multi-objective model (Step 4)
-- ✅ Evaluation & visualization (Step 5) ← **COMPLETE**
+- ✅ Evaluation & visualization (Step 5)
+- ✅ Top-K evaluation: Precision/Recall/Health (Step 6) ← **COMPLETE**
 
 ---
 

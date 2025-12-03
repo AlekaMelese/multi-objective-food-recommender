@@ -90,22 +90,39 @@ cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
 
 ---
 
+### Step 6: Top-K Evaluation (Precision, Recall, Health)
+```bash
+cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
+/scratch/aayalew25/Aleka/alekapy/bin/python 6_topk_evaluation.py
+```
+**Output:**
+- `results/topk_evaluation.json` - Precision@10, Recall@10, F1-Score, Avg Health (Top-10)
+
+**What this does:**
+- Evaluates recommendation quality with Precision/Recall metrics
+- Measures healthfulness of Top-10 recommendations
+- Shows trade-off between accuracy and health
+
+---
+
 ## Quick Run: All Steps at Once
 ```bash
 cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
 
 # Run all steps sequentially
-/scratch/aayalew25/Aleka/alekapy/bin/python 3_baseline_model.py && \
+/scratch/aayalew25/Aleka/alekapy/bin/python 3_baseline_model_sklearn.py && \
 /scratch/aayalew25/Aleka/alekapy/bin/python 4_multiobjective_model.py && \
-/scratch/aayalew25/Aleka/alekapy/bin/python 5_evaluate_visualize.py
+/scratch/aayalew25/Aleka/alekapy/bin/python 5_evaluate_visualize.py && \
+/scratch/aayalew25/Aleka/alekapy/bin/python 6_topk_evaluation.py
 ```
 
 ---
 
 ## Expected Timeline
-- **Step 3 (Baseline):** ~2-3 minutes
-- **Step 4 (Multi-objective):** ~10-15 minutes (trains 5 models)
-- **Step 5 (Evaluation):** ~1-2 minutes
+- **Step 3 (Baseline):** ~5 seconds
+- **Step 4 (Multi-objective):** ~5 seconds
+- **Step 5 (Visualization):** ~2 seconds
+- **Step 6 (Top-K Evaluation):** ~30 seconds
 
 **Total:** ~15-20 minutes
 

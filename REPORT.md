@@ -36,7 +36,31 @@ The dataset exhibits high sparsity (99.53%), which is typical for collaborative 
 
 ## 2. Methodology
 
-### 2.1 Baseline Model: Preference-Only Recommendation
+### 2.1 Data Preprocessing
+
+**Data Cleaning**:
+- Filtered recipes to include only those with complete nutritional information and user ratings
+- Removed recipes missing WHO health scores or key nutritional fields
+- Final dataset: 281 recipes (from 703 original) with 28,491 ratings
+
+**Normalization**:
+- Ratings: Normalized from [1,5] scale to [0,1] using formula: `rating_normalized = (rating - 1) / 4`
+- Health scores: Already in [0,1] range (WHO-aligned health scores)
+- Rationale: Ensures both objectives operate on the same scale for fair weighting in multi-objective function
+
+**Data Split Strategy**:
+- Train: 80% (22,792 ratings)
+- Validation: 10% (2,849 ratings)
+- Test: 10% (2,850 ratings)
+- Split method: Random split (justified by lack of temporal information in dataset)
+- High sparsity: 99.53% (typical for collaborative filtering)
+
+**User Health Preference Baseline**:
+- Computed average health score of recipes each user has rated
+- Used to understand existing user health preferences
+- Average user health preference: 0.5990 (moderate health consciousness)
+
+### 2.2 Baseline Model: Preference-Only Recommendation
 
 **Model Architecture**: Non-negative Matrix Factorization (NMF)
 
@@ -58,7 +82,7 @@ Where:
 
 **Rationale**: NMF was chosen over SVD due to implementation constraints with the scikit-surprise library. NMF provides non-negative latent factors, which are interpretable as "part-based" representations and work well for rating prediction tasks.
 
-### 2.2 Multi-Objective Model: Preference + Health
+### 2.3 Multi-Objective Model: Preference + Health
 
 The multi-objective model introduces a weighted combination of preference prediction and health scores:
 
@@ -76,19 +100,19 @@ Where:
 
 **Tested α values**: 0.0, 0.25, 0.5, 0.75, 1.0
 
-### 2.3 Evaluation Metrics
+### 2.4 Evaluation Metrics
 
-1. **RMSE (Root Mean Squared Error)**: Measures rating prediction accuracy
-   - Lower is better
-   - Penalizes large errors more heavily
+**Rating Prediction Accuracy**:
+1. **RMSE (Root Mean Squared Error)**: Measures rating prediction accuracy (lower is better)
+2. **MAE (Mean Absolute Error)**: Average absolute deviation from actual ratings (lower is better)
 
-2. **MAE (Mean Absolute Error)**: Average absolute deviation from actual ratings
-   - Lower is better
-   - More robust to outliers than RMSE
+**Recommendation Quality (Top-K)**:
+3. **Precision@10**: Proportion of Top-10 recommended items that are relevant (rating ≥ 4.0)
+4. **Recall@10**: Proportion of relevant items that appear in Top-10 recommendations
+5. **F1-Score**: Harmonic mean of Precision and Recall
 
-3. **Average Health Score**: Mean health score of recommended items
-   - Higher is better
-   - Indicates nutritional quality of recommendations
+**Healthfulness**:
+6. **Avg Health Score (Top-10)**: Average WHO health score of Top-10 recommended recipes (higher is better)
 
 ---
 
@@ -114,7 +138,19 @@ The baseline model achieves an RMSE of 3.6491 on the test set, establishing our 
 | 0.75    | 75%               | 25%           | 0.7433    | 0.7102   | 0.5990           |
 | 1.00    | 100%              | 0%            | 0.8782    | 0.8460   | 0.5990           |
 
-### 3.3 Key Findings
+### 3.3 Top-K Recommendation Quality
+
+| α Value | Precision@10 | Recall@10 | F1-Score | Avg Health (Top-10) |
+|---------|--------------|-----------|----------|---------------------|
+| 0.00    | 0.0041       | 0.0349    | 0.0073   | 0.9137              |
+| 0.25    | 0.0039       | 0.0341    | 0.0071   | 0.9058              |
+| 0.50    | 0.0045       | 0.0379    | 0.0080   | 0.8810              |
+| 0.75    | 0.0055       | 0.0463    | 0.0099   | 0.8530              |
+| 1.00    | 0.0056       | 0.0485    | 0.0100   | 0.6005              |
+
+**Key Trade-off**: As α increases (more preference focus), Precision/Recall improve slightly, but health quality of Top-10 recommendations decreases dramatically (from 0.9137 to 0.6005).
+
+### 3.4 Key Findings
 
 1. **Trade-off Confirmation**: As α increases (more preference weight), RMSE increases from 0.3920 to 0.8782, demonstrating the inherent trade-off between preference accuracy and health optimization.
 
@@ -124,7 +160,9 @@ The baseline model achieves an RMSE of 3.6491 on the test set, establishing our 
 
 4. **Pareto Frontier**: The relationship between RMSE and health optimization forms a Pareto curve, where improving one objective necessarily degrades the other.
 
-### 3.4 Visualizations
+5. **Top-K Health Quality**: Pure health optimization (α=0.0) produces Top-10 recommendations with avg health score of 0.9137, while pure preference (α=1.0) drops to 0.6005—a 52% reduction in healthfulness.
+
+### 3.5 Visualizations
 
 **Figure 1: Pareto Curve** (see `plots/pareto_curve.png`)
 - Shows the trade-off frontier between preference accuracy (RMSE) and health optimization
@@ -170,20 +208,49 @@ The results reveal a fundamental tension in multi-objective recommendation:
 
 3. **Gradual Nudging**: Systems could start with higher α (preference-focused) and gradually decrease it as users become more health-aware.
 
-### 4.3 Ethical Considerations
+### 4.3 Ethical Considerations and Responsible AI
 
-**Benefits**:
-- Promotes public health by nudging users toward healthier choices
-- Maintains user agency through transparent α parameter
-- Addresses obesity and diet-related health issues
+**Risks of Nudging Behavior: Over-Restriction vs. Freedom of Choice**
 
-**Concerns**:
-- **Paternalism**: System makes value judgments about "healthy" choices
-- **User Autonomy**: May conflict with user freedom to choose unhealthy options
-- **Fairness**: WHO health scores may not align with all cultural dietary preferences or medical conditions (e.g., diabetes, allergies)
-- **Transparency**: Users may not understand why certain recipes are recommended
+Our multi-objective system employs "nudging"—subtly steering users toward healthier choices. This raises critical ethical tensions:
 
-**Recommendation**: Implement user-controllable α parameter with clear explanations of health scores and allow users to opt-out of health optimization.
+- **Over-Restriction Risk (Low α)**: When α = 0.0-0.25, the system heavily prioritizes health, potentially recommending recipes users dislike. This risks:
+  - Reduced user engagement and system abandonment
+  - Paternalistic decision-making that overrides personal preferences
+  - Potential backlash against "forced" health optimization
+
+- **Freedom of Choice (High α)**: When α = 0.75-1.0, users get what they prefer, but system may enable unhealthy eating patterns:
+  - Reinforces existing poor dietary habits
+  - Missed opportunity for public health intervention
+  - Filter bubble effect: users never discover healthier alternatives
+
+- **Balance**: α = 0.5 offers compromise, but who decides the "right" balance? This reflects deeper questions about system responsibility vs. individual autonomy.
+
+**Personalization Fairness Across Dietary Preference Groups**
+
+The fairness of health-based recommendations varies significantly across user populations:
+
+1. **Cultural Dietary Preferences**:
+   - WHO health scores reflect Western nutritional guidelines
+   - May penalize culturally important foods (e.g., high-sodium fermented foods in Asian cuisine)
+   - Users from non-Western backgrounds may experience systematically lower satisfaction with health-optimized recommendations
+
+2. **Medical Conditions**:
+   - A recipe "healthy" for general population may be harmful for diabetics (high carbs), kidney patients (high protein), or those with allergies
+   - One-size-fits-all health scores fail to account for personalized medical needs
+   - System could inadvertently recommend dangerous foods to vulnerable users
+
+3. **Socioeconomic Factors**:
+   - Healthier recipes often require expensive ingredients or more preparation time
+   - Low-income users may be nudged toward unaffordable recommendations
+   - Creates fairness gap where health optimization benefits privileged users more
+
+**Recommendations for Responsible Deployment**:
+- Implement user-controllable α parameter with clear explanations
+- Allow complete opt-out of health optimization
+- Provide personalized health profiles accounting for medical conditions and cultural preferences
+- Transparently display why each recipe is recommended (preference vs. health contribution)
+- Monitor fairness metrics across demographic groups
 
 ### 4.4 Limitations
 
