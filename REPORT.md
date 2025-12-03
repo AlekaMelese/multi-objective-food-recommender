@@ -103,13 +103,15 @@ Where:
 ### 2.4 Evaluation Metrics
 
 **Rating Prediction Accuracy**:
-1. **RMSE (Root Mean Squared Error)**: Measures rating prediction accuracy (lower is better)
-2. **MAE (Mean Absolute Error)**: Average absolute deviation from actual ratings (lower is better)
+1. **RMSE (Root Mean Squared Error)**: Measures rating prediction accuracy (lower is better).
+2. **MAE (Mean Absolute Error)**: Average absolute deviation from actual ratings (lower is better).
 
 **Recommendation Quality (Top-K)**:
-3. **Precision@10**: Proportion of Top-10 recommended items that are relevant (rating ≥ 4.0)
-4. **Recall@10**: Proportion of relevant items that appear in Top-10 recommendations
-5. **F1-Score**: Harmonic mean of Precision and Recall
+
+3. **Precision@10**: Proportion of Top-10 recommended items that are relevant (rating ≥ 4.0).
+4. **Recall@10**: Proportion of relevant items that appear in Top-10 recommendations.
+5. **F1-Score**: Harmonic mean of Precision and Recall.
+
 
 **Healthfulness**:
 6. **Avg Health Score (Top-10)**: Average WHO health score of Top-10 recommended recipes (higher is better)
