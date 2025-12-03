@@ -107,11 +107,13 @@ Where:
 2. **MAE (Mean Absolute Error)**: Average absolute deviation from actual ratings (lower is better)
 
 **Recommendation Quality (Top-K)**:
+
 3. **Precision@10**: Proportion of Top-10 recommended items that are relevant (rating ≥ 4.0)
 4. **Recall@10**: Proportion of relevant items that appear in Top-10 recommendations
 5. **F1-Score**: Harmonic mean of Precision and Recall
 
 **Healthfulness**:
+
 6. **Avg Health Score (Top-10)**: Average WHO health score of Top-10 recommended recipes (higher is better)
 
 ---
@@ -321,7 +323,7 @@ This project successfully demonstrates the implementation and evaluation of a mu
 
 **Code Repository Structure**:
 ```
-Project 2/
+Project /
 ├── src/
 │   ├── 1_explore_data.py
 │   ├── 2_prepare_data.py
@@ -335,15 +337,7 @@ Project 2/
 └── requirements.txt       # Dependencies
 ```
 
-**Run All Steps**:
-```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
-/scratch/aayalew25/Aleka/alekapy/bin/python 3_baseline_model_sklearn.py
-/scratch/aayalew25/Aleka/alekapy/bin/python 4_multiobjective_model.py
-/scratch/aayalew25/Aleka/alekapy/bin/python 5_evaluate_visualize.py
-```
 
-**Total Runtime**: ~15 seconds
 
 ---
 
