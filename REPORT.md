@@ -126,7 +126,6 @@ Where:
 |--------|-----------|------|
 | **RMSE** | 3.6707 | **3.6491** |
 | **MAE** | 3.5690 | 3.5342 |
-| **Training Time** | 3.98 seconds | - |
 
 The baseline model achieves an RMSE of 3.6491 on the test set, establishing our benchmark for pure preference-based recommendation. Note that ratings were normalized to [0,1] for consistency with health scores.
 
