@@ -1,6 +1,6 @@
 # Multi-Objective Food Recommendation System: Balancing User Preference and Health
 
-**Project 2: Recommender Systems**
+**Project: Recommender Systems**
 
 ---
 
