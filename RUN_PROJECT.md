@@ -2,7 +2,7 @@
 
 ## Project Structure
 ```
-Project 2/
+Project /
 ├── data/                    # Processed datasets (created by step 2)
 ├── src/                     # Source code
 ├── models/                  # Trained models (saved here)
@@ -171,10 +171,3 @@ python 2_prepare_data.py
 
 ---
 
-## Next: Generate Report
-After all steps complete, you'll have all data needed for the 3-4 page report showing:
-1. Baseline performance (preference only)
-2. Multi-objective results (various α values)
-3. Pareto curve (trade-off visualization)
-4. Health improvement analysis
-5. Ethical implications discussion
