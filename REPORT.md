@@ -326,16 +326,6 @@ Project 2/
 └── requirements.txt       # Dependencies
 ```
 
-**Run All Steps**:
-```bash
-cd "/scratch/aayalew25/Food/FoodNew/Project 2/src"
-/scratch/aayalew25/Aleka/alekapy/bin/python 3_baseline_model_sklearn.py
-/scratch/aayalew25/Aleka/alekapy/bin/python 4_multiobjective_model.py
-/scratch/aayalew25/Aleka/alekapy/bin/python 5_evaluate_visualize.py
-```
 
-**Total Runtime**: ~15 seconds
-
----
 
 *Report prepared for Project 2: Multi-Objective Recommendation Systems*
