@@ -22,16 +22,21 @@ print("="*80)
 # ==============================================================================
 print("\n[1/4] Loading model and data...")
 
-with open(f"{MODELS_DIR}/baseline_nmf.pkl", 'rb') as f:
+with open(f"{MODELS_DIR}/baseline_svd.pkl", 'rb') as f:
     model_data = pickle.load(f)
 
-W = model_data['W']
-H = model_data['H']
+U = model_data['U']
+Vt = model_data['Vt']
+global_mean = model_data['global_mean']
 user_to_idx = model_data['user_to_idx']
 recipe_to_idx = model_data['recipe_to_idx']
 
-# Reconstruct predicted rating matrix
-predicted_matrix = np.dot(W, H)
+# Reconstruct predicted rating matrix (1-5 scale from baseline)
+predicted_matrix = np.dot(U, Vt) + global_mean
+# Clip to valid rating range [1, 5]
+predicted_matrix = np.clip(predicted_matrix, 1, 5)
+# Normalize to [0, 1] for combining with health scores
+predicted_matrix_norm = (predicted_matrix - 1) / 4
 
 # Load data
 recipes_df = pd.read_csv(f"{DATA_DIR}/recipes.csv")
@@ -87,15 +92,14 @@ for alpha in alpha_values:
 
             recipe_idx = recipe_to_idx[recipe_id]
 
-            # Predicted preference
-            pred_preference = predicted_matrix[user_idx, recipe_idx]
-            pred_preference = np.clip(pred_preference, 0, 1)
+            # Predicted preference (normalized 0-1)
+            pred_preference_norm = predicted_matrix_norm[user_idx, recipe_idx]
 
             # Health score
             health_score = health_scores[recipe_id]
 
-            # Multi-objective score
-            score = alpha * pred_preference + (1 - alpha) * health_score
+            # Multi-objective score (on normalized 0-1 scale)
+            score = alpha * pred_preference_norm + (1 - alpha) * health_score
 
             recipe_scores.append({
                 'recipe_id': recipe_id,

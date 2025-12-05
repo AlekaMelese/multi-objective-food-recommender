@@ -52,9 +52,9 @@ Split: 80% train, 10% validation, 10% test
 
 - ✅ Data exploration (Step 1)
 - ✅ Data preparation (Step 2)
-- ✅ Baseline model (Step 3 - NMF)
+- ✅ Baseline model (Step 3 - SVD)
 - ✅ Multi-objective model (Step 4)
-- ✅ Evaluation & visualization (Step 5)
+- ✅ Evaluation & visualization (Step 5-8)
 - ✅ Top-K evaluation: Precision/Recall/Health (Step 6) ← **COMPLETE**
 
 ---
@@ -68,26 +68,30 @@ See [RUN_PROJECT.md](RUN_PROJECT.md) for complete terminal commands and explanat
 ## Results Summary
 
 ✅ **Baseline Model (Preference Only)**
-- Model: NMF (20 factors)
-- Test RMSE: **3.6491**
-- Test MAE: 3.5342
-- Training time: 3.98 seconds
+- Model: Truncated SVD (50 components with mean-centering)
+- Test RMSE: **0.9056** (on 1-5 scale)
+- Test MAE: 0.6702
+- Significant improvement over NMF (previous RMSE: 3.6491)
 
 ✅ **Multi-Objective Model Results**
 
-| α Value | Preference Weight | Health Weight | Test RMSE | Avg Health |
-|---------|-------------------|---------------|-----------|------------|
-| 0.00    | 0%                | 100%          | 0.3920    | 0.5990     |
-| 0.25    | 25%               | 75%           | 0.4937    | 0.5990     |
-| 0.50    | 50%               | 50%           | 0.6138    | 0.5990     |
-| 0.75    | 75%               | 25%           | 0.7433    | 0.5990     |
-| 1.00    | 100%              | 0%            | 0.8782    | 0.5990     |
+| α Value | Preference Weight | Health Weight | Test RMSE | Avg Health (Top-10) |
+|---------|-------------------|---------------|-----------|---------------------|
+| 0.00    | 0%                | 100%          | 1.5681    | 0.9137              |
+| 0.25    | 25%               | 75%           | 1.3115    | 0.9137              |
+| 0.50    | 50%               | 50%           | 1.0958    | 0.9136              |
+| 0.75    | 75%               | 25%           | 0.9490    | 0.9089              |
+| 1.00    | 100%              | 0%            | 0.9056    | 0.5868              |
 
-**Key Finding:** As preference weight increases (α→1.0), RMSE increases, showing the trade-off between user preference accuracy and health optimization.
+**Key Findings:**
+- As preference weight increases (α→1.0), RMSE decreases (better rating prediction) but health quality of recommendations drops dramatically (0.9137 → 0.5868, a 36% reduction)
+- Clear Pareto trade-off: Better preference accuracy comes at the cost of health optimization
+- Balanced approach (α=0.5) maintains 99.9% of maximum health while achieving moderate prediction performance
 
 ✅ **Visualizations**
-- Pareto curve showing preference vs health trade-off
-- Alpha comparison plots
+- Pareto curve showing preference vs health trade-off (plots/pareto_curve.png)
+- Alpha comparison plots (plots/alpha_comparison.png)
+- Precision/Recall/F1-Score analysis (plots/precision_recall_analysis.png)
 
 ---
 

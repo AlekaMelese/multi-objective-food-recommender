@@ -24,18 +24,22 @@ print("="*80)
 # ==============================================================================
 print("\n[1/4] Loading baseline model and data...")
 
-# Load baseline NMF model
-with open(f"{MODELS_DIR}/baseline_nmf.pkl", 'rb') as f:
+# Load baseline SVD model (better than NMF)
+with open(f"{MODELS_DIR}/baseline_svd.pkl", 'rb') as f:
     model_data = pickle.load(f)
 
-W = model_data['W']
-H = model_data['H']
+U = model_data['U']
+Vt = model_data['Vt']
+global_mean = model_data['global_mean']
 user_to_idx = model_data['user_to_idx']
 recipe_to_idx = model_data['recipe_to_idx']
 
-# Reconstruct predicted rating matrix (normalized 0-1)
-predicted_matrix = np.dot(W, H)
-predicted_matrix = np.clip(predicted_matrix, 0, 1)  # Clip to [0,1]
+# Reconstruct predicted rating matrix (1-5 scale from baseline)
+predicted_matrix = np.dot(U, Vt) + global_mean
+# Clip to valid rating range [1, 5]
+predicted_matrix = np.clip(predicted_matrix, 1, 5)
+# Normalize to [0, 1] for combining with health scores
+predicted_matrix_norm = (predicted_matrix - 1) / 4  # Convert 1-5 to 0-1
 
 # Load data
 recipes_df = pd.read_csv(f"{DATA_DIR}/recipes.csv")
@@ -82,19 +86,23 @@ for alpha in alpha_values:
     for _, row in test_df.iterrows():
         user_id = row['member_id']
         recipe_id = row['recipe_id']
-        actual_rating = row['rating_normalized']
+        actual_rating = row['rating']  # Use original 1-5 scale
 
         # Get predicted preference (from baseline model)
         user_idx = user_to_idx[user_id]
         recipe_idx = recipe_to_idx[recipe_id]
-        pred_preference = predicted_matrix[user_idx, recipe_idx]
+        pred_preference_norm = predicted_matrix_norm[user_idx, recipe_idx]  # Normalized 0-1
 
-        # Get health score
-        health_score = health_scores[recipe_id]
+        # Get health score (0-1 scale)
+        health_score_norm = health_scores[recipe_id]
 
-        # Multi-objective score: α·Preference + (1-α)·Health
-        multi_obj_score = alpha * pred_preference + (1 - alpha) * health_score
+        # Multi-objective score on normalized scale: α·Preference + (1-α)·Health
+        multi_obj_score_norm = alpha * pred_preference_norm + (1 - alpha) * health_score_norm
 
+        # Denormalize to 1-5 scale for RMSE calculation
+        multi_obj_score = multi_obj_score_norm * 4 + 1  # Convert 0-1 to 1-5
+
+        # RMSE measures how well multi-objective score predicts actual user ratings
         predictions.append(multi_obj_score)
         actuals.append(actual_rating)
 
@@ -112,11 +120,11 @@ for alpha in alpha_values:
                 continue
 
             recipe_idx = recipe_to_idx[recipe_id]
-            pred_preference = predicted_matrix[user_idx, recipe_idx]
+            pred_preference_norm = predicted_matrix_norm[user_idx, recipe_idx]  # Normalized 0-1
             health_score = health_scores[recipe_id]
 
-            # Multi-objective score
-            score = alpha * pred_preference + (1 - alpha) * health_score
+            # Multi-objective score (on normalized 0-1 scale)
+            score = alpha * pred_preference_norm + (1 - alpha) * health_score
 
             recipe_scores.append({
                 'recipe_id': recipe_id,

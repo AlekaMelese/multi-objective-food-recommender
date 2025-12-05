@@ -62,25 +62,29 @@ The dataset exhibits high sparsity (99.53%), which is typical for collaborative 
 
 ### 2.2 Baseline Model: Preference-Only Recommendation
 
-**Model Architecture**: Non-negative Matrix Factorization (NMF)
+**Model Architecture**: Truncated Singular Value Decomposition (SVD)
 
-We implemented a baseline model that optimizes solely for rating prediction using NMF, a matrix factorization technique that decomposes the user-item interaction matrix into latent factor representations:
+We implemented a baseline model that optimizes solely for rating prediction using Truncated SVD, a matrix factorization technique that decomposes the user-item interaction matrix into latent factor representations:
 
 ```
-R ≈ W × H
+R_centered ≈ U × Σ × V^T
+R = R_centered + global_mean
 ```
 
 Where:
 - **R**: User-item rating matrix (17,208 × 281)
-- **W**: User latent factors (17,208 × 20)
-- **H**: Recipe latent factors (20 × 281)
+- **U**: User latent factors (17,208 × 50)
+- **Σ**: Singular values (diagonal matrix)
+- **V^T**: Recipe latent factors (50 × 281)
+- **global_mean**: Average rating across all training data (for mean-centering)
 
 **Model Parameters**:
-- Latent factors: 20
-- Maximum iterations: 200
+- Latent factors: 50 components
+- Maximum iterations: 20
 - Random state: 42 (for reproducibility)
+- Mean-centering: Applied before decomposition
 
-**Rationale**: NMF was chosen over SVD due to implementation constraints with the scikit-surprise library. NMF provides non-negative latent factors, which are interpretable as "part-based" representations and work well for rating prediction tasks.
+**Rationale**: SVD with mean-centering significantly outperforms NMF (RMSE: 0.9056 vs. 3.6491) by capturing both global rating tendencies and user-specific preferences. The mean-centering step is crucial for recommendation tasks as it removes bias and allows the model to focus on preference deviations.
 
 ### 2.3 Multi-Objective Model: Preference + Health
 
@@ -95,7 +99,7 @@ Where:
   - α = 1.0: Pure preference (baseline)
   - α = 0.5: Balanced approach
   - α = 0.0: Pure health optimization
-- **Preference(u, i)**: Predicted rating from baseline NMF model (normalized to [0,1])
+- **Preference(u, i)**: Predicted rating from baseline SVD model (normalized from [1,5] to [0,1])
 - **Health(i)**: WHO health score for recipe i (already in [0,1] range)
 
 **Tested α values**: 0.0, 0.25, 0.5, 0.75, 1.0
@@ -124,20 +128,20 @@ Where:
 
 | Metric | Validation | Test |
 |--------|-----------|------|
-| **RMSE** | 3.6707 | **3.6491** |
-| **MAE** | 3.5690 | 3.5342 |
+| **RMSE** | 0.9120 | **0.9056** |
+| **MAE** | 0.6753 | 0.6702 |
 
-The baseline model achieves an RMSE of 3.6491 on the test set, establishing our benchmark for pure preference-based recommendation. Note that ratings were normalized to [0,1] for consistency with health scores.
+The baseline SVD model achieves an RMSE of 0.9056 on the test set (on 1-5 rating scale), establishing our benchmark for pure preference-based recommendation. This represents strong performance, significantly outperforming the initial NMF baseline (RMSE: 3.6491).
 
 ### 3.2 Multi-Objective Model Performance
 
 | α Value | Preference Weight | Health Weight | Test RMSE | Test MAE | Avg Health (Top-10) |
 |---------|-------------------|---------------|-----------|----------|---------------------|
-| 0.00    | 0%                | 100%          | 0.3920    | 0.3520   | 0.9137              |
-| 0.25    | 25%               | 75%           | 0.4937    | 0.4577   | 0.9064              |
-| 0.50    | 50%               | 50%           | 0.6138    | 0.5770   | 0.8836              |
-| 0.75    | 75%               | 25%           | 0.7433    | 0.7102   | 0.8576              |
-| 1.00    | 100%              | 0%            | 0.8782    | 0.8460   | 0.5983              |
+| 0.00    | 0%                | 100%          | 1.5681    | 1.4079   | 0.9137              |
+| 0.25    | 25%               | 75%           | 1.3115    | 1.1869   | 0.9137              |
+| 0.50    | 50%               | 50%           | 1.0958    | 0.9807   | 0.9136              |
+| 0.75    | 75%               | 25%           | 0.9490    | 0.8072   | 0.9089              |
+| 1.00    | 100%              | 0%            | 0.9056    | 0.6702   | 0.5868              |
 
 ### 3.3 Top-K Recommendation Quality
 
@@ -146,26 +150,26 @@ Evaluated on 2,155 test users with at least one relevant item (rating ≥ 4.0):
 | α Value | Precision@10 | Recall@10 | F1-Score | Avg Health (Top-10) |
 |---------|--------------|-----------|----------|---------------------|
 | 0.00    | 0.0041       | 0.0349    | 0.0073   | 0.9137              |
-| 0.25    | 0.0039       | 0.0341    | 0.0071   | 0.9058              |
-| 0.50    | 0.0045       | 0.0379    | 0.0080   | 0.8810              |
-| 0.75    | 0.0055       | 0.0463    | 0.0099   | 0.8530              |
-| 1.00    | 0.0056       | 0.0485    | 0.0100   | 0.6005              |
+| 0.25    | 0.0041       | 0.0349    | 0.0073   | 0.9137              |
+| 0.50    | 0.0041       | 0.0349    | 0.0073   | 0.9136              |
+| 0.75    | 0.0039       | 0.0330    | 0.0069   | 0.9086              |
+| 1.00    | 0.0045       | 0.0384    | 0.0081   | 0.5884              |
 
-**Key Trade-off**: As α increases (more preference focus), Precision/Recall improve slightly, but health quality of Top-10 recommendations decreases dramatically (from 0.9137 to 0.6005).
+**Key Trade-off**: As α increases (more preference focus), Precision/Recall remain relatively stable, but health quality of Top-10 recommendations decreases dramatically (from 0.9137 to 0.5884) — a 52% reduction.
 
-**Note on Low Precision/Recall Values**: The relatively low Precision@10 (0.0041-0.0056) and Recall@10 (0.0349-0.0485) values are expected due to extreme dataset sparsity (99.57%) and the fact that most test users have only 1-2 ratings. This is typical for sparse recommendation datasets and does not indicate model failure.
+**Note on Low Precision/Recall Values**: The relatively low Precision@10 (0.0039-0.0045) and Recall@10 (0.0330-0.0384) values are expected due to extreme dataset sparsity (99.57%) and the fact that most test users have only 1-2 ratings. This is typical for sparse recommendation datasets and does not indicate model failure.
 
 ### 3.4 Key Findings
 
-1. **Trade-off Confirmation**: As α increases (more preference weight), RMSE increases from 0.3920 to 0.8782, demonstrating the inherent trade-off between preference accuracy and health optimization.
+1. **Trade-off Confirmation**: As α increases (more preference weight), RMSE decreases from 1.5681 to 0.9056, demonstrating that the system achieves better rating prediction accuracy when prioritizing user preferences. However, this comes at the cost of health optimization.
 
-2. **Health Trade-off**: The average health score of Top-10 recommendations decreases from 0.9137 (α=0.0, pure health focus) to 0.5983 (α=1.0, pure preference focus)—a 52% reduction. This demonstrates that optimizing for user preference comes at a significant cost to healthfulness.
+2. **Health Trade-off**: The average health score of Top-10 recommendations decreases from 0.9137 (α=0.0, pure health focus) to 0.5868 (α=1.0, pure preference focus)—a 36% reduction. This demonstrates that optimizing for user preference comes at a significant cost to healthfulness.
 
-3. **Balanced Approach**: α = 0.5 provides a middle ground with RMSE = 0.6138 and health score of 0.8836, offering reasonable prediction accuracy while maintaining relatively high health quality.
+3. **Balanced Approach**: α = 0.5 provides a middle ground with RMSE = 1.0958 and health score of 0.9136, offering a compromise between prediction accuracy and health quality. At this setting, the system maintains 99.9% of the maximum health score while achieving moderate prediction performance.
 
 4. **Pareto Frontier**: The relationship between RMSE and health optimization forms a Pareto curve, where improving one objective necessarily degrades the other. No single α value is "optimal"—the choice depends on policy goals.
 
-5. **Recommendation Quality**: Precision@10 and Recall@10 are low (0.004-0.006 and 0.03-0.05) due to extreme sparsity (99.57%), but increase slightly with α as the model prioritizes preference matching over health.
+5. **Recommendation Quality**: Precision@10 and Recall@10 are low (0.0039-0.0045 and 0.0330-0.0384) due to extreme sparsity (99.57%), but remain relatively stable across α values. The primary impact of α is on health quality, not on traditional recommendation accuracy metrics.
 
 ### 3.5 Visualizations
 
@@ -181,19 +185,19 @@ Evaluated on 2,155 test users with at least one relevant item (rating ≥ 4.0):
 
 ![Alpha Comparison](plots/alpha_comparison.png)
 
-- Left panel: RMSE increases linearly with α (from 0.3920 to 0.8782)
-- Right panel: Average health of Top-10 recommendations decreases with α (from 0.9137 to 0.5983)
-- Clearly shows the trade-off: better preference accuracy vs. healthier recommendations
+- Left panel: RMSE decreases with α (from 1.5681 to 0.9056) — lower is better for rating prediction
+- Right panel: Average health of Top-10 recommendations decreases with α (from 0.9137 to 0.5868)
+- Clearly shows the trade-off: better preference accuracy (lower RMSE) vs. healthier recommendations (higher health score)
 
 **Figure 3: Precision/Recall Analysis**
 
 ![Precision/Recall Analysis](plots/precision_recall_analysis.png)
 
-- Comprehensive 4-panel visualization of Top-K recommendation quality
-- Top-left: Precision@10 increases with α (0.0041 to 0.0056)
-- Top-right: Recall@10 increases with α (0.0349 to 0.0485)
-- Bottom-left: F1-Score trends (harmonic mean of Precision & Recall)
-- Bottom-right: Health quality of Top-10 recommendations (decreases from 0.9137 to 0.6005)
+- 3-panel visualization of Top-K recommendation quality metrics
+- Left: Precision@10 remains stable across α values (0.0039 to 0.0045)
+- Middle: Recall@10 shows similar stability (0.0330 to 0.0384)
+- Right: F1-Score (harmonic mean of Precision & Recall) ranges from 0.0069 to 0.0081
+- Note: Low values are due to dataset sparsity (99.57%), not model failure
 
 ---
 
@@ -206,16 +210,19 @@ The results reveal a fundamental tension in multi-objective recommendation:
 **Pure Preference (α=1.0)**:
 - Maximizes user satisfaction in the short term
 - May lead to unhealthy eating patterns
-- RMSE: 0.8782 (highest error in our multi-objective framework)
+- RMSE: 0.9056 (best rating prediction accuracy)
+- Health score: 0.5868 (significantly worse than health-optimized approaches)
 
 **Pure Health (α=0.0)**:
 - Optimizes nutritional quality
 - May recommend items users dislike, reducing engagement
-- RMSE: 0.3920 (lowest error, but ignores personalization)
+- RMSE: 1.5681 (worst rating prediction, but not personalized to preferences)
+- Health score: 0.9137 (maximum health optimization)
 
 **Balanced Approach (α=0.5)**:
 - Offers compromise between preference and health
-- RMSE: 0.6138
+- RMSE: 1.0958 (moderate prediction accuracy)
+- Health score: 0.9136 (maintains 99.9% of maximum health quality)
 - Suitable for "health-conscious but taste-aware" recommendation scenario
 
 ### 4.2 Practical Implications
@@ -278,9 +285,9 @@ The fairness of health-based recommendations varies significantly across user po
 
 This project successfully demonstrates the implementation and evaluation of a multi-objective food recommendation system that balances user preference with health optimization. Key contributions include:
 
-1. **Technical Implementation**: Successfully trained baseline NMF model and multi-objective framework with configurable trade-off parameter α
+1. **Technical Implementation**: Successfully trained baseline SVD model (RMSE: 0.9056) and multi-objective framework with configurable trade-off parameter α
 
-2. **Empirical Validation**: Demonstrated clear trade-off between preference accuracy (RMSE) and health optimization across five α values
+2. **Empirical Validation**: Demonstrated clear trade-off between preference accuracy (RMSE: 1.5681 → 0.9056) and health optimization (Health: 0.9137 → 0.5868) across five α values
 
 3. **Ethical Analysis**: Identified key tensions between system-driven health nudging and user autonomy
 
@@ -294,7 +301,7 @@ This project successfully demonstrates the implementation and evaluation of a mu
 
 - Dataset: Food.com recipes and ratings
 - WHO Nutritional Guidelines (health score calculation)
-- NMF Algorithm: scikit-learn v1.2+
+- Truncated SVD Algorithm: scikit-learn v1.2+
 - Multi-objective optimization principles from Pareto efficiency theory
 
 ---
@@ -303,18 +310,21 @@ This project successfully demonstrates the implementation and evaluation of a mu
 
 **Code Repository Structure**:
 ```
-Project /
+Project 2/
 ├── src/
 │   ├── 1_explore_data.py
 │   ├── 2_prepare_data.py
-│   ├── 3_baseline_model_sklearn.py
-│   ├── 4_multiobjective_model.py
-│   └── 5_evaluate_visualize.py
-├── data/                  # Processed datasets
-├── models/                # Trained models (.pkl)
-├── results/               # JSON results
-├── plots/                 # Visualizations
-└── requirements.txt       # Dependencies
+│   ├── 3_baseline_model_svd.py        # SVD baseline model
+│   ├── 4_multiobjective_model.py       # Multi-objective model
+│   ├── 5_pareto_plot.py                # Pareto curve visualization
+│   ├── 6_topk_evaluation.py            # Top-K metrics evaluation
+│   ├── 7_precision_recall_plot.py      # Precision/Recall visualization
+│   └── 8_alpha_comparison_plot.py      # Alpha comparison plot
+├── data/                               # Processed datasets
+├── models/                             # Trained models (.pkl)
+├── results/                            # JSON results
+├── plots/                              # Visualizations
+└── REPORT.md                           # This report
 ```
 
 

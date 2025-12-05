@@ -1,0 +1,18 @@
+{
+  "model_type": "Truncated SVD",
+  "objective": "Rating prediction (collaborative filtering)",
+  "parameters": {
+    "n_components": 50,
+    "random_state": 42,
+    "global_mean": 4.571604071604072
+  },
+  "training_time_seconds": 10.927135467529297,
+  "validation_metrics": {
+    "RMSE": 0.8548935573566315,
+    "MAE": 0.6428349681152509
+  },
+  "test_metrics": {
+    "RMSE": 0.9055643462596271,
+    "MAE": 0.6702221263885969
+  }
+}
