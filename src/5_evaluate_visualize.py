@@ -33,22 +33,40 @@ print("✓ Loaded all results")
 # ==============================================================================
 print("\n[2/3] Generating Pareto curve...")
 
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(10, 7))
 alphas = pareto['alpha_values']
 rmse = pareto['rmse_values']
 health = pareto['health_values']
 
-plt.plot(rmse, health, 'o-', linewidth=2, markersize=8, color='steelblue')
+# Plot with larger markers and thicker line
+plt.plot(rmse, health, 'o-', linewidth=2.5, markersize=10, color='steelblue',
+         markerfacecolor='steelblue', markeredgewidth=2, markeredgecolor='darkblue')
 
-# Annotate points
+# Annotate points with alpha values
 for i, alpha in enumerate(alphas):
-    plt.annotate(f'α={alpha:.2f}', (rmse[i], health[i]),
-                 textcoords="offset points", xytext=(0,10), ha='center')
+    # Adjust text position based on point location
+    if i == 0:  # α=0.0 (top)
+        xytext = (10, 5)
+    elif i == len(alphas) - 1:  # α=1.0 (bottom right)
+        xytext = (10, -10)
+    else:
+        xytext = (10, 5)
 
-plt.xlabel('RMSE (Lower is Better)', fontsize=12)
-plt.ylabel('Average Health Score (Higher is Better)', fontsize=12)
-plt.title('Pareto Curve: Preference vs Health Trade-off', fontsize=14, fontweight='bold')
-plt.grid(True, alpha=0.3)
+    plt.annotate(f'α={alpha:.2f}', (rmse[i], health[i]),
+                 textcoords="offset points", xytext=xytext, ha='left',
+                 fontsize=10, fontweight='bold',
+                 bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.3))
+
+plt.xlabel('RMSE (Lower is Better)', fontsize=13, fontweight='bold')
+plt.ylabel('Average Health Score (Higher is Better)', fontsize=13, fontweight='bold')
+plt.title('Pareto Frontier: Preference Accuracy vs Health Optimization',
+          fontsize=14, fontweight='bold')
+plt.grid(True, alpha=0.3, linestyle='--')
+
+# Set axis limits to show the full range
+plt.xlim([0.85, 1.65])
+plt.ylim([0.55, 0.95])
+
 plt.tight_layout()
 
 pareto_path = f"{PLOTS_DIR}/pareto_curve.png"
