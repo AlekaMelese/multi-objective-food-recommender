@@ -131,15 +131,17 @@ The baseline model achieves an RMSE of 3.6491 on the test set, establishing our 
 
 ### 3.2 Multi-Objective Model Performance
 
-| α Value | Preference Weight | Health Weight | Test RMSE | Test MAE | Avg Health Score |
-|---------|-------------------|---------------|-----------|----------|------------------|
-| 0.00    | 0%                | 100%          | 0.3920    | 0.3520   | 0.5990           |
-| 0.25    | 25%               | 75%           | 0.4937    | 0.4577   | 0.5990           |
-| 0.50    | 50%               | 50%           | 0.6138    | 0.5770   | 0.5990           |
-| 0.75    | 75%               | 25%           | 0.7433    | 0.7102   | 0.5990           |
-| 1.00    | 100%              | 0%            | 0.8782    | 0.8460   | 0.5990           |
+| α Value | Preference Weight | Health Weight | Test RMSE | Test MAE | Avg Health (Top-10) |
+|---------|-------------------|---------------|-----------|----------|---------------------|
+| 0.00    | 0%                | 100%          | 0.3920    | 0.3520   | 0.9137              |
+| 0.25    | 25%               | 75%           | 0.4937    | 0.4577   | 0.9064              |
+| 0.50    | 50%               | 50%           | 0.6138    | 0.5770   | 0.8836              |
+| 0.75    | 75%               | 25%           | 0.7433    | 0.7102   | 0.8576              |
+| 1.00    | 100%              | 0%            | 0.8782    | 0.8460   | 0.5983              |
 
 ### 3.3 Top-K Recommendation Quality
+
+Evaluated on 2,155 test users with at least one relevant item (rating ≥ 4.0):
 
 | α Value | Precision@10 | Recall@10 | F1-Score | Avg Health (Top-10) |
 |---------|--------------|-----------|----------|---------------------|
@@ -157,13 +159,13 @@ The baseline model achieves an RMSE of 3.6491 on the test set, establishing our 
 
 1. **Trade-off Confirmation**: As α increases (more preference weight), RMSE increases from 0.3920 to 0.8782, demonstrating the inherent trade-off between preference accuracy and health optimization.
 
-2. **Health Score Consistency**: The average health score remains constant at 0.5990 across all α values because we're evaluating on the same test set. The key difference is in *which* recipes would be recommended to users under different α values.
+2. **Health Trade-off**: The average health score of Top-10 recommendations decreases from 0.9137 (α=0.0, pure health focus) to 0.5983 (α=1.0, pure preference focus)—a 52% reduction. This demonstrates that optimizing for user preference comes at a significant cost to healthfulness.
 
-3. **Balanced Approach**: α = 0.5 provides a middle ground with RMSE = 0.6138, offering reasonable prediction accuracy while incorporating health considerations.
+3. **Balanced Approach**: α = 0.5 provides a middle ground with RMSE = 0.6138 and health score of 0.8836, offering reasonable prediction accuracy while maintaining relatively high health quality.
 
-4. **Pareto Frontier**: The relationship between RMSE and health optimization forms a Pareto curve, where improving one objective necessarily degrades the other.
+4. **Pareto Frontier**: The relationship between RMSE and health optimization forms a Pareto curve, where improving one objective necessarily degrades the other. No single α value is "optimal"—the choice depends on policy goals.
 
-5. **Top-K Health Quality**: Pure health optimization (α=0.0) produces Top-10 recommendations with avg health score of 0.9137, while pure preference (α=1.0) drops to 0.6005—a 52% reduction in healthfulness.
+5. **Recommendation Quality**: Precision@10 and Recall@10 are low (0.004-0.006 and 0.03-0.05) due to extreme sparsity (99.57%), but increase slightly with α as the model prioritizes preference matching over health.
 
 ### 3.5 Visualizations
 
@@ -179,9 +181,9 @@ The baseline model achieves an RMSE of 3.6491 on the test set, establishing our 
 
 ![Alpha Comparison](plots/alpha_comparison.png)
 
-- Left panel: RMSE increases linearly with α
-- Right panel: Health scores remain stable (artifact of evaluation methodology)
-- Shows the baseline (α=1.0) has highest RMSE
+- Left panel: RMSE increases linearly with α (from 0.3920 to 0.8782)
+- Right panel: Average health of Top-10 recommendations decreases with α (from 0.9137 to 0.5983)
+- Clearly shows the trade-off: better preference accuracy vs. healthier recommendations
 
 **Figure 3: Precision/Recall Analysis**
 

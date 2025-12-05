@@ -15,7 +15,7 @@
       "health_weight": 1.0,
       "test_rmse": 0.39202792487284416,
       "test_mae": 0.3519800110489485,
-      "avg_health_score": 0.5989946905983895
+      "avg_health_score": 0.913731831708594
     },
     {
       "alpha": 0.25,
@@ -23,7 +23,7 @@
       "health_weight": 0.75,
       "test_rmse": 0.493706644055835,
       "test_mae": 0.45767300267375677,
-      "avg_health_score": 0.5989946905983895
+      "avg_health_score": 0.9064074182154161
     },
     {
       "alpha": 0.5,
@@ -31,7 +31,7 @@
       "health_weight": 0.5,
       "test_rmse": 0.6137580931472227,
       "test_mae": 0.5770489466669845,
-      "avg_health_score": 0.5989946905983895
+      "avg_health_score": 0.8835759757840734
     },
     {
       "alpha": 0.75,
@@ -39,7 +39,7 @@
       "health_weight": 0.25,
       "test_rmse": 0.7433331241352215,
       "test_mae": 0.7101963503543194,
-      "avg_health_score": 0.5989946905983895
+      "avg_health_score": 0.8575542017998985
     },
     {
       "alpha": 1.0,
@@ -47,7 +47,7 @@
       "health_weight": 0.0,
       "test_rmse": 0.8782264286524379,
       "test_mae": 0.8459660933111448,
-      "avg_health_score": 0.5989946905983895
+      "avg_health_score": 0.598345678373862
     }
   ]
 }

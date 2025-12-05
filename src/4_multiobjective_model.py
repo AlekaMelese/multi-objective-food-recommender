@@ -73,7 +73,11 @@ for alpha in alpha_values:
     # Calculate multi-objective scores for test set
     predictions = []
     actuals = []
-    health_scores_list = []
+
+    # NEW: Calculate average health of Top-K recommended items for each test user
+    K = 10  # Top-10 recommendations
+    test_users = test_df['member_id'].unique()
+    recommended_health_scores = []
 
     for _, row in test_df.iterrows():
         user_id = row['member_id']
@@ -93,16 +97,48 @@ for alpha in alpha_values:
 
         predictions.append(multi_obj_score)
         actuals.append(actual_rating)
-        health_scores_list.append(health_score)
+
+    # Generate Top-K recommendations for each user to calculate average health
+    for user_id in test_users:
+        if user_id not in user_to_idx:
+            continue
+
+        user_idx = user_to_idx[user_id]
+
+        # Score all recipes for this user
+        recipe_scores = []
+        for recipe_id in recipes_df['recipe_id']:
+            if recipe_id not in recipe_to_idx:
+                continue
+
+            recipe_idx = recipe_to_idx[recipe_id]
+            pred_preference = predicted_matrix[user_idx, recipe_idx]
+            health_score = health_scores[recipe_id]
+
+            # Multi-objective score
+            score = alpha * pred_preference + (1 - alpha) * health_score
+
+            recipe_scores.append({
+                'recipe_id': recipe_id,
+                'score': score,
+                'health_score': health_score
+            })
+
+        # Get Top-K recommendations
+        recipe_scores.sort(key=lambda x: x['score'], reverse=True)
+        top_k = recipe_scores[:K]
+
+        # Average health of Top-K
+        avg_health_topk = np.mean([r['health_score'] for r in top_k])
+        recommended_health_scores.append(avg_health_topk)
 
     predictions = np.array(predictions)
     actuals = np.array(actuals)
-    health_scores_list = np.array(health_scores_list)
 
     # Metrics
     rmse = np.sqrt(mean_squared_error(actuals, predictions))
     mae = mean_absolute_error(actuals, predictions)
-    avg_health = np.mean(health_scores_list)
+    avg_health = np.mean(recommended_health_scores)  # Average health of Top-K recommendations
 
     results_by_alpha[alpha] = {
         "alpha": alpha,
