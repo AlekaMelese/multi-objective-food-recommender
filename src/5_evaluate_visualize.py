@@ -17,7 +17,7 @@ print("="*80)
 
 # Load results
 print("\n[1/3] Loading results...")
-with open(f"{RESULTS_DIR}/baseline_results.json", 'r') as f:
+with open(f"{RESULTS_DIR}/baseline_svd_results.json", 'r') as f:
     baseline = json.load(f)
 
 with open(f"{RESULTS_DIR}/multiobjective_results.json", 'r') as f:
@@ -63,22 +63,29 @@ print("\n[3/3] Generating alpha comparison plot...")
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
-# RMSE vs Alpha
-ax1.plot(alphas, rmse, 'o-', linewidth=2, markersize=8, color='coral')
-ax1.axhline(y=baseline['test_metrics']['RMSE'], color='red', linestyle='--',
-            label='Baseline (Preference Only)', linewidth=2)
+# RMSE vs Alpha (removed baseline dashed line)
+ax1.plot(alphas, rmse, 'o-', linewidth=2.5, markersize=8, color='coral')
 ax1.set_xlabel('α (Preference Weight)', fontsize=11)
-ax1.set_ylabel('RMSE', fontsize=11)
+ax1.set_ylabel('RMSE (Lower is Better)', fontsize=11)
 ax1.set_title('RMSE vs α', fontsize=12, fontweight='bold')
-ax1.legend()
 ax1.grid(True, alpha=0.3)
 
-# Health vs Alpha
-ax2.plot(alphas, health, 'o-', linewidth=2, markersize=8, color='seagreen')
+# Add value annotations to RMSE plot
+for i, (x, y) in enumerate(zip(alphas, rmse)):
+    ax1.annotate(f'{y:.4f}', (x, y), textcoords="offset points",
+                 xytext=(0, 8), ha='center', fontsize=9)
+
+# Health vs Alpha (with value annotations)
+ax2.plot(alphas, health, 'o-', linewidth=2.5, markersize=8, color='seagreen')
 ax2.set_xlabel('α (Preference Weight)', fontsize=11)
-ax2.set_ylabel('Average Health Score', fontsize=11)
+ax2.set_ylabel('Avg Health Score (Higher is Better)', fontsize=11)
 ax2.set_title('Health Score vs α', fontsize=12, fontweight='bold')
 ax2.grid(True, alpha=0.3)
+
+# Add value annotations to Health plot
+for i, (x, y) in enumerate(zip(alphas, health)):
+    ax2.annotate(f'{y:.4f}', (x, y), textcoords="offset points",
+                 xytext=(0, 8), ha='center', fontsize=9)
 
 plt.tight_layout()
 alpha_path = f"{PLOTS_DIR}/alpha_comparison.png"
