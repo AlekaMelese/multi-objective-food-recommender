@@ -8,8 +8,8 @@ import numpy as np
 import os
 
 # Paths
-RECIPES_PATH = "/scratch/aayalew25/Food/Data/Recipes.csv"
-RATINGS_PATH = "/scratch/aayalew25/Food/Data/Ratings.csv"
+RECIPES_PATH = "Data/Recipes.csv"
+RATINGS_PATH = "Data/Ratings.csv"
 
 print("="*80)
 print("HUMMUS DATASET EXPLORATION")
