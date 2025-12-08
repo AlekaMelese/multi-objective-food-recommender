@@ -12,9 +12,9 @@ import json
 from sklearn.model_selection import train_test_split
 
 # Paths
-RECIPES_PATH = "/scratch/aayalew25/Food/Data/Recipes.csv"
-RATINGS_PATH = "/scratch/aayalew25/Food/Data/Ratings.csv"
-OUTPUT_DIR = "/scratch/aayalew25/Food/FoodNew/Project 2/data"
+RECIPES_PATH = "Data/Recipes.csv"
+RATINGS_PATH = "Data/Ratings.csv"
+OUTPUT_DIR = "FoodNew/Project 2/data"
 
 print("="*80)
 print("DATA PREPARATION FOR MULTI-OBJECTIVE RECOMMENDATION")
