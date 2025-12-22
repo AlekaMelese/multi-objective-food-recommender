@@ -661,7 +661,7 @@ In general, and based on our experimental results, domain-specific full paramete
 
 \small
 \begin{longtable} [htbp]{|p{1.57cm}|p{1.3cm}|p{0.8cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|p{1.45cm}|p{1.2cm}|p{1.2cm}|p{1.2cm}|}
-\caption{Performance metrics for different models across validation and test stages, including loss, ROUGE scores, METEOR, and BERTScore metrics.\label{tab:fullparameter_performance}} \\
+\caption{Performance metrics for different models across validation and test stages (full parameter training ), including loss, ROUGE scores, METEOR, and BERTScore metrics.\label{tab:fullparameter_performance}} \\
 \hline
 \textbf{Model} & \textbf{Stage} & \textbf{Loss} & \textbf{ROUGE-1} & \textbf{ROUGE-2} & \textbf{ROUGE-L} & \textbf{METEOR} & \textbf{BERT- \linebreak Score Precision} & \textbf{BERT- \linebreak Score Recall} & \textbf{BERT- \linebreak Score F1} \\
 \hline
@@ -701,7 +701,10 @@ In general, and based on our experimental results, domain-specific full paramete
 
 
 \subsection{Experiments: 4. LoRA Parameter-Efficient Fine-Tuning}
-From previous experiments, we have obtained a better result using an experiment with full parameter fine-tuning. Even though we have been getting a good result in the full parameter fine-tuning, we need to compare it with parameter-efficient fine-tuning (LoRA) with domain-specific clinical data.  The LoRA configuration employs a rank (r) of 16 and an alpha value of 32, creating low-rank decomposition matrices that adapt only a small subset of the model's parameters. LoRA is particularly effective when applied to the attention mechanism in transformer-based architectures. 
+From previous experiments, we have obtained a better result using an experiment with full parameter fine-tuning. Even though we have been getting a good result in the full parameter fine-tuning, we need to compare it with parameter-efficient fine-tuning (LoRA) with domain-specific clinical data. The LoRA configuration employs a rank ($r$) of 16 and an alpha value of 32, creating low-rank decomposition matrices that adapt only a small subset of the model's parameters. \textcolor{red}{In all models, LoRA adapters are applied to the attention projection layers (\texttt{q\_proj, k\_proj, v\_proj, o\_proj}) and the feed-forward projection layers (\texttt{gate\_proj, up\_proj, down\_proj}) with a dropout of 0.1 (\texttt{lora\_dropout=0.05}), while all remaining parameters are frozen.} LoRA is particularly effective when applied to the attention mechanism in transformer-based architectures.
+
+
+
 LoRA \parencite{liao_dynamic_2025} is a prevalent parameter-efficient fine-tuning approach for large-scale models. The method proposes isolating the weight deltas from fine-tuning and approximating them using low-rank matrices. During inference, both the (frozen) pre-trained model and the low-rank deltas, referred to as \textit{adapters}, are forward-passed, and their activations are aggregated. Let $\bm{W} \in \mathbb{R}^{d \times k}$ be a pre-trained weight matrix. LoRA approximates the modifications from fine-tuning as:
 \begin{equation}
 \Delta \bm{W} \approx \bm{B} \bm{A}, \quad \bm{B} \in \mathbb{R}^{d \times r},\ \bm{A} \in \mathbb{R}^{r \times k},\ r \ll \min(d, k)
@@ -937,7 +940,10 @@ Beyond this, we thoroughly examined how our research questions are addressed. We
 \textbf{RQ3:} LoRA achieves superior results with only 0.8-4.8\% trainable parameters, while also significantly outperforming both computationally lightweight extractive methods and resource-intensive complete fine-tuning by striking the optimal equilibrium between performance and computational efficiency. LoRA achieves 2.6× better performance than extractive methods with moderate computational requirements and 62-74\% GPU memory reduction compared to full fine-tuning, in contrast to extractive algorithms, which require minimal resources but deliver inadequate clinical performance (ROUGE-1: ~0.25). This makes high-performance clinical summarization accessible to resource-constrained healthcare areas. 
 
 \textbf{RQ4:}  Zero-shot summarization using structured prompts exhibits varying effectiveness across different model architectures, with large language models (LLMs) demonstrating a superior baseline understanding of clinical contexts compared to traditional transformers. Our tailored prompting strategies ranged from straightforward task descriptions for conventional models to complex system-user prompt combinations for LLMs, facilitating zero-shot performance. Notably, LLaMA-3-8B and Mistral-7B significantly surpassed traditional transformers and extractive baselines. The use of structured prompts not only enhanced factual coherence but also reduced hallucinations by constraining output formats and aligning models with clinical terminology rules. Subsequent fine-tuning led to substantial improvements in clinical accuracy and coherence, with LoRA fine-tuning yielding the most remarkable result in LLaMA-3-8B. The improvements in BERTScore from zero-shot to LoRA fine-tuning reflect enhanced semantic accuracy and reduced hallucination rates. This underscores how fine-tuning builds upon the foundation established by structured prompts to achieve superior factual consistency and medical coherence, which are essential for clinical applications.
-
+\textcolor{red}{
+\subsection{Summary of Key Findings}
+This study yields three principal findings. First, LLaMA-3-8B with LoRA achieves the highest summarization performance (ROUGE-1: 0.7022, BERTScore F1: 0.9180), surpassing all other models and training strategies. Second, LoRA consistently outperforms full fine-tuning across all architectures while requiring only 0.8\% of trainable parameters. Third, the performance ranking follows a consistent pattern: LLMs with LoRA exceed transformers with LoRA, which outperform full fine-tuning, followed by zero-shot inference, with extractive methods achieving the lowest scores.\\
+\textbf{Takeaways:} (i) Parameter-efficient fine-tuning provides both computational efficiency and improved summarization quality for clinical text. (ii) LLMs demonstrate superior clinical language understanding compared to traditional transformers. (iii) LoRA reduces GPU memory requirements by 62--74\% and training time by approximately 5-times, making clinical AI accessible to healthcare organizations with limited computational resources.}
 
 \subsection{Comparison with Previous Works }
 
