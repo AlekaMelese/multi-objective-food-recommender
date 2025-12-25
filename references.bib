@@ -1,4 +1,49 @@
 
+@inproceedings{aghajanyan_intrinsic_2021,
+	address = {Online},
+	title = {Intrinsic {Dimensionality} {Explains} the {Effectiveness} of {Language} {Model} {Fine}-{Tuning}},
+	url = {https://aclanthology.org/2021.acl-long.568/},
+	doi = {10.18653/v1/2021.acl-long.568},
+	abstract = {Although pretrained language models can be fine-tuned to produce state-of-the-art results for a very wide range of language understanding tasks, the dynamics of this process are not well understood, especially in the low data regime. Why can we use relatively vanilla gradient descent algorithms (e.g., without strong regularization) to tune a model with hundreds of millions of parameters on datasets with only hundreds or thousands of labeled examples? In this paper, we argue that analyzing fine-tuning through the lens of intrinsic dimension provides us with empirical and theoretical intuitions to explain this remarkable phenomenon. We empirically show that common pre-trained models have a very low intrinsic dimension; in other words, there exists a low dimension reparameterization that is as effective for fine-tuning as the full parameter space. For example, by optimizing only 200 trainable parameters randomly projected back into the full space, we can tune a RoBERTa model to achieve 90\% of the full parameter performance levels on MRPC. Furthermore, we empirically show that pre-training implicitly minimizes intrinsic dimension and, perhaps surprisingly, larger models tend to have lower intrinsic dimension after a fixed number of pre-training updates, at least in part explaining their extreme effectiveness. Lastly, we connect intrinsic dimensionality with low dimensional task representations and compression based generalization bounds to provide intrinsic-dimension-based generalization bounds that are independent of the full parameter count.},
+	urldate = {2025-12-24},
+	booktitle = {Proceedings of the 59th {Annual} {Meeting} of the {Association} for {Computational} {Linguistics} and the 11th {International} {Joint} {Conference} on {Natural} {Language} {Processing} ({Volume} 1: {Long} {Papers})},
+	publisher = {Association for Computational Linguistics},
+	author = {Aghajanyan, Armen and Gupta, Sonal and Zettlemoyer, Luke},
+	editor = {Zong, Chengqing and Xia, Fei and Li, Wenjie and Navigli, Roberto},
+	month = aug,
+	year = {2021},
+	pages = {7319--7328},
+}
+
+@misc{houlsby_parameter-efficient_2019,
+	title = {Parameter-{Efficient} {Transfer} {Learning} for {NLP}},
+	url = {http://arxiv.org/abs/1902.00751},
+	doi = {10.48550/arXiv.1902.00751},
+	abstract = {Fine-tuning large pre-trained models is an effective transfer mechanism in NLP. However, in the presence of many downstream tasks, fine-tuning is parameter inefficient: an entire new model is required for every task. As an alternative, we propose transfer with adapter modules. Adapter modules yield a compact and extensible model; they add only a few trainable parameters per task, and new tasks can be added without revisiting previous ones. The parameters of the original network remain fixed, yielding a high degree of parameter sharing. To demonstrate adapter's effectiveness, we transfer the recently proposed BERT Transformer model to 26 diverse text classification tasks, including the GLUE benchmark. Adapters attain near state-of-the-art performance, whilst adding only a few parameters per task. On GLUE, we attain within 0.4\% of the performance of full fine-tuning, adding only 3.6\% parameters per task. By contrast, fine-tuning trains 100\% of the parameters per task.},
+	urldate = {2025-12-24},
+	publisher = {arXiv},
+	author = {Houlsby, Neil and Giurgiu, Andrei and Jastrzebski, Stanislaw and Morrone, Bruna and Laroussilhe, Quentin de and Gesmundo, Andrea and Attariyan, Mona and Gelly, Sylvain},
+	month = jun,
+	year = {2019},
+	note = {arXiv:1902.00751 [cs]},
+	keywords = {Computer Science - Computation and Language, Computer Science - Machine Learning, Statistics - Machine Learning},
+}
+
+@misc{hu_lora_2021,
+	title = {{LoRA}: {Low}-{Rank} {Adaptation} of {Large} {Language} {Models}},
+	shorttitle = {{LoRA}},
+	url = {http://arxiv.org/abs/2106.09685},
+	doi = {10.48550/arXiv.2106.09685},
+	abstract = {An important paradigm of natural language processing consists of large-scale pre-training on general domain data and adaptation to particular tasks or domains. As we pre-train larger models, full fine-tuning, which retrains all model parameters, becomes less feasible. Using GPT-3 175B as an example -- deploying independent instances of fine-tuned models, each with 175B parameters, is prohibitively expensive. We propose Low-Rank Adaptation, or LoRA, which freezes the pre-trained model weights and injects trainable rank decomposition matrices into each layer of the Transformer architecture, greatly reducing the number of trainable parameters for downstream tasks. Compared to GPT-3 175B fine-tuned with Adam, LoRA can reduce the number of trainable parameters by 10,000 times and the GPU memory requirement by 3 times. LoRA performs on-par or better than fine-tuning in model quality on RoBERTa, DeBERTa, GPT-2, and GPT-3, despite having fewer trainable parameters, a higher training throughput, and, unlike adapters, no additional inference latency. We also provide an empirical investigation into rank-deficiency in language model adaptation, which sheds light on the efficacy of LoRA. We release a package that facilitates the integration of LoRA with PyTorch models and provide our implementations and model checkpoints for RoBERTa, DeBERTa, and GPT-2 at https://github.com/microsoft/LoRA.},
+	urldate = {2025-12-24},
+	publisher = {arXiv},
+	author = {Hu, Edward J. and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Wang, Lu and Chen, Weizhu},
+	month = oct,
+	year = {2021},
+	note = {arXiv:2106.09685 [cs]},
+	keywords = {Computer Science - Artificial Intelligence, Computer Science - Computation and Language, Computer Science - Machine Learning},
+}
+
 @misc{yang_low-rank_2025,
 	title = {Low-{Rank} {Adaptation} for {Foundation} {Models}: {A} {Comprehensive} {Review}},
 	shorttitle = {Low-{Rank} {Adaptation} for {Foundation} {Models}},
@@ -55,7 +100,7 @@
 	urldate = {2025-12-23},
 }
 
-@inproceedings{aghajanyan_intrinsic_2021,
+@inproceedings{aghajanyan_intrinsic_2021-1,
 	address = {Online},
 	title = {Intrinsic {Dimensionality} {Explains} the {Effectiveness} of {Language} {Model} {Fine}-{Tuning}},
 	url = {https://aclanthology.org/2021.acl-long.568},
@@ -868,7 +913,7 @@ better health outcomes.},
 	pages = {114144},
 }
 
-@misc{hu_lora_2021,
+@misc{hu_lora_2021-1,
 	title = {{LoRA}: {Low}-{Rank} {Adaptation} of {Large} {Language} {Models}},
 	shorttitle = {{LoRA}},
 	url = {http://arxiv.org/abs/2106.09685},
@@ -883,7 +928,7 @@ better health outcomes.},
 	keywords = {Computer Science - Artificial Intelligence, Computer Science - Computation and Language, Computer Science - Machine Learning},
 }
 
-@misc{hu_lora_2021-1,
+@misc{hu_lora_2021-2,
 	title = {{LoRA}: {Low}-{Rank} {Adaptation} of {Large} {Language} {Models}},
 	shorttitle = {{LoRA}},
 	url = {http://arxiv.org/abs/2106.09685},
