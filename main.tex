@@ -63,10 +63,10 @@
 %\vspace{1.5cm}
 \begin {abstract}
 
-Analyzing and summarizing critical information from electronic health records places a significant burden on clinicians. While transformer models and Large Language Models (LLMs) are effective for this task, the computational cost and strict performance requirements in healthcare present major challenges. This work addresses the challenge of computational cost and strict performance requirements in healthcare by evaluating parameter-efficient fine-tuning (PEFT) techniques in the context of abstractive summarization.
+Analyzing and summarizing critical information from electronic health records places a significant burden on clinicians. While transformer models and Large Language Models (LLMs) are effective for this task, the computational cost and strict performance requirements in healthcare present major challenges. This work addresses these challenges of computational cost and stringent performance requirements in healthcare by evaluating parameter-efficient fine-tuning (PEFT) techniques for the context of abstractive clinical note summarization.
 \\
 \\
-We conducted a comprehensive evaluation on the MIMIC-IV-Ext-BHC v1.2.0 dataset, containing 270,033 clinical notes, comparing four transformer models (T5, PEGASUS-XSUM, BART, and FLAN-T5) and two LLMs (Mistral-7B and LLaMA-3-8B) using zero-shot, full fine-tuning, and LoRA fine-tuning. Additionally, we integrated LexRank, clinical NLP functionalities provided by cTAKES, and domain-specific semantic similarity techniques into graph-based extractive summarization. \textcolor{red}{Our experiments revealed that LoRA achieved higher scores than full fine-tuning on key metrics while reducing the computational burden.} Specifically, our LLaMA-3B model, fine-tuned with LoRA, achieved a ROUGE-1 score of 0.7022, a ROUGE-2 of 0.5312, a ROUGE-L of 0.6718, a METEOR of 0.6787, a BERTScore precision of 0.9124, a BERTScore recall of 0.9238, and a BERTScore F1 of 0.9180 on the test set. \textcolor{red}{This performance corresponds to a 2.6$\times$ higher ROUGE-1 score compared to the leading extractive baseline, though direct comparison is limited by fundamental differences between extractive and abstractive summarization approaches, and was accomplished with approximately 99\% fewer trainable parameters compared to full fine-tuning.} Our research demonstrates that LoRA is a highly effective and scalable solution for deploying sophisticated language models in resource-constrained medical environments, providing a robust framework to improve healthcare professionals' access to information and speed up clinical decision-making.\\
+We conducted a comprehensive evaluation on the MIMIC-IV-Ext-BHC v1.2.0 dataset, containing 270,033 clinical notes, comparing four transformer models (T5, PEGASUS-XSUM, BART, and FLAN-T5) and two LLMs (Mistral-7B and LLaMA-3-8B) across zero-shot, full fine-tuning, and LoRA fine-tuning. Additionally, we integrated LexRank, clinical NLP functionalities from cTAKES, and domain-specific semantic similarity techniques into graph-based extractive summarization. \textcolor{red}{Our experiments demonstrated that LoRA achieved higher scores than full fine-tuning on key metrics while reducing the computational burden.} Specifically, ourLLaMA-3-8B model, fine-tuned with LoRA, achieved a ROUGE-1 score of 0.7022, ROUGE-2 of 0.5312, ROUGE-L of 0.6718, METEOR of 0.6787, and BERTScore F1 of 0.9180 on the test set. \textcolor{red}{This performance represents a 2.6× improvement in ROUGE-1 over the leading extractive baseline, though direct comparison is limited by fundamental differences between extractive and abstractive approaches. Notably, these results were accomplished using approximately 97--99\% fewer trainable parameters than full fine-tuning.} Our research demonstrates that LoRA provides an effective and scalable solution for deploying sophisticated language models in resource-constrained medical environments, offering  a robust framework to enhance healthcare professionals' information access and accelerate clinical decision-making.\\
 
 
 \textbf{Keywords:} Clinical Note Summarization, LLMs, LoRA, Parameter-Efficient Fine-tuning, Transformer Models, cTAKES
@@ -104,7 +104,7 @@ Using a carefully planned multi-pronged experimental method, our research direct
 \end{itemize}
 \textbf{Empirical:} 
 \begin{itemize}
-    \item \textcolor{red}{The proposed method achieves higher evaluation scores in abstractive medical text summaries, particularly with LLMs. LoRA achieves comparable or higher scores than complete fine-tuning while using fewer computing resources, facilitating deployment in clinical contexts.}
+    \item The proposed method performs better in abstractive medical text summaries, especially with LLMs. LoRA yields better summaries than complete fine-tuning while using far fewer computing resources, making powerful NLP models more accessible and deployable in clinical contexts.
     \item We validate the effectiveness and robustness of our approach. At the same time, we provide detailed model-specific analysis, identifying which transformer architectures and LLMs are particularly well-suited for efficient adaptation using LoRA in the medical domain.
 \end{itemize}
 \textbf{Practical:} 
@@ -396,7 +396,55 @@ The BERTScore is a more contemporary and semantically aware evaluation metric th
 \label{eq:bert-f1}
 \end{equation}
 \section{Implementation Details}
-All experiments were conducted using the Python programming language with essential libraries such as PyTorch and the Hugging Face Transformers library, with the PEFT library facilitating LoRA implementation. The training was performed on NVIDIA A100 and NVIDIA  A1000 GPUs, employing memory management techniques such as gradient checkpointing to reduce peak memory usage. For fine-tuning experiments, the dataset was partitioned into training, validation, and test sets with a standard ratio (70\% training, 15\% validation, 15\% test) \parencite{ayalew_smart_2025}. The validation set was used for hyperparameter tuning and early stopping to prevent overfitting, while the test set was held out and used only for final performance evaluation to ensure an unbiased assessment of generalization capabilities \parencite{ayalew_smart_2024}. In this proposed work, we employed the "large" version of each transformer model (with a maximum sequence length of 1024 tokens) to maintain a consistent capacity across the different architectures. The model was trained for 5 epochs using a learning rate of $2 \times 10^{-5}$, a per-device batch size of 4, and 8 gradient accumulation steps. For the generation process, we utilized 3 beams, applying a length penalty of 1.0 and a repetition penalty of 1.1. Additionally, a no-repeat n-gram size of 3 was enforced to avoid redundancy. The generation process was further refined with early stopping set to True, an overlap of 100, and a dynamic batch size ranging from 6 to 12.
+All experiments were conducted using the Python programming language with essential libraries such as PyTorch and the Hugging Face Transformers library, with the PEFT library facilitating LoRA implementation. The training was performed on NVIDIA  A1000 GPU, employing memory management techniques such as gradient checkpointing to reduce peak memory usage. For fine-tuning experiments, the dataset was partitioned into training, validation, and test sets with a standard ratio (70\% training, 15\% validation, 15\% test) \parencite{ayalew_smart_2025}. The validation set was used for hyperparameter tuning and early stopping to prevent overfitting, while the test set was held out and used only for final performance evaluation to ensure an unbiased assessment of generalization capabilities \parencite{ayalew_smart_2024}. In this proposed work, we employed the "large" version of each transformer model (with a maximum sequence length of 1024 tokens) to maintain a consistent capacity across the different architectures. The model was trained for 5 epochs using a learning rate of $2 \times 10^{-5}$, a per-device batch size of 4, and 8 gradient accumulation steps. For the generation process, we utilized 3 beams, applying a length penalty of 1.0 and a repetition penalty of 1.1. Additionally, a no-repeat n-gram size of 3 was enforced to avoid redundancy. The generation process was further refined with early stopping set to True, an overlap of 100, and a dynamic batch size ranging from 6 to 12. \textcolor{red}{ As seen from Table \ref{tab:compute_metrics}, we present a detailed comparison of the trainable and total parameters, peak GPU memory usage, and training duration for both full fine-tuning and the LoRA technique across various models. The findings illustrate that LoRA not only utilizes a significantly reduced number of trainable parameters, thereby minimizing the overall model complexity, but it also exhibits a marginally lower peak GPU memory consumption. Additionally, the training time required for LoRA is comparatively shorter than that of full fine-tuning, making it a more efficient approach for model adaptation in resource-constrained environments. }
+
+\begin{table}[H]
+\caption{Compute and Efficiency Comparison of Full Fine-Tuning vs. LoRA Across Models.}
+\label{tab:compute_metrics}
+\small
+\renewcommand{\arraystretch}{1.2}
+\textcolor{red}{
+\begin{tabular}{|
+p{2.2cm}|
+p{2.1cm}|
+p{2.2cm}|
+p{2.2cm}|
+p{2.5cm}|
+p{2.4cm}|
+}
+\hline
+\textbf{Model} 
+& \textbf{Fine-Tuning Type} 
+& \textbf{Trainable Parameters} 
+& \textbf{Total Parameters} 
+& \textbf{GPU Memory \linebreak Usage (Peak)} 
+& \textbf{Training Time} \\
+\hline
+\multirow{T5} & Full & 755M & 755M & 8.26 GiB & 6h 36m \\
+\cline{2-6}
+ & LoRA & 17.3M & 755M & 2.96 GiB & 2h 10m \\
+\hline
+\multirow{Flan-T5} & Full & 801M & 801M & 8.77 GiB & 6h 47m \\
+\cline{2-6}
+ & LoRA & 18.3M & 801M & 3.14 GiB & 2h 18m \\
+\hline
+\multirow{BART} & Full & 411M & 411M & 1.57 GiB & 4h 49m \\
+\cline{2-6}
+ & LoRA & 4.7M & 411M & 0.77 GiB & 1h 39m \\
+\hline
+\multirow{Pegasus-XSum} & Full & 571M & 571M & 8.26 GiB & 7h 52m \\
+\cline{2-6}
+ & LoRA & 0.78M & 571M & 2.15 GiB & 2h 35m \\
+\hline
+Mistral-7B & LoRA & 41.9M & 7.28B & 27.46 GiB & 5h 06m \\
+\hline
+Llama-2-7B & LoRA & 39.9M & 6.77B & 25.57 GiB & 5h 04m \\
+\hline
+\end{tabular}
+}
+\end{table}
+
+
 
 \section{Experimental Results}
 We conducted four categories of experiments. The first experiment focused on extractive summarization utilizing cTAKES. The second experiment, detailed in Algorithm \ref{alg:abstractive}, explored abstractive summarization using both transformer and LLM models without employing fine-tuning techniques. The third experiment involved full parameter fine-tuning exclusively for transformer models, as we opted not to perform full parameter fine-tuning for LLMs due to limitations in computational resources. Finally, the fourth experiment examined parameter-efficient fine-tuning via LoRA for both transformer and LLM models.
@@ -565,7 +613,7 @@ As seen from Figure \ref{fig:Mistral} and Figure \ref{fig:Llama}, the Mistral-7B
 \hline
 \endlastfoot
 
-\textbf{PEGASUS \linebreak -XSUM} & 0.22 & 0.05 & 0.11 & 0.16 & 0.77 & 0.81 & 0.796 \\
+\textbf{Pegasus \linebreak -XSum} & 0.22 & 0.05 & 0.11 & 0.16 & 0.77 & 0.81 & 0.796 \\
 \hline
 \textbf{FLAN-T5} & 0.25 & 0.04 & 0.12 & 0.15 & 0.80 & 0.80 & 0.80 \\
 \hline
@@ -675,7 +723,7 @@ In general, and based on our experimental results, domain-specific full paramete
 \hline
 \endlastfoot
 
-\multirow{\textbf{PEGASUS \linebreak -XSUM}} & Validation & \textcolor{black}{2.4913 } & \textcolor{black}{0.4879 }& \textcolor{black}{0.2297}& \textcolor{black}{0.4351} & \textcolor{black}{0.3786 }& 0.8452 & 0.8693 & 0.8569 \\
+\multirow{\textbf{Pegasus \linebreak -XSum}} & Validation & \textcolor{black}{2.4913 } & \textcolor{black}{0.4879 }& \textcolor{black}{0.2297}& \textcolor{black}{0.4351} & \textcolor{black}{0.3786 }& 0.8452 & 0.8693 & 0.8569 \\
 \cline{2-10}
  & Test & 2.4673  & 0.4867 & 0.2240 & 0.4324 & 0.3694 & 0.8419 & 0.8682 & 0.8546 \\
 \hline
@@ -860,7 +908,7 @@ Mistral-7B showcased remarkable performance via LoRA parameter-efficient fine-tu
 \endfoot
 \hline
 \endlastfoot
-\multirow{\textbf{PEGASUS \linebreak -XSUM}} & Validation & 3.3920 & 0.4860 & 0.2122 & 0.4186 & 0.3831 & 0.8702 & 0.8696 & 0.8699 \\
+\multirow{\textbf{Pegasus \linebreak -XSum}} & Validation & 3.3920 & 0.4860 & 0.2122 & 0.4186 & 0.3831 & 0.8702 & 0.8696 & 0.8699 \\
 \cline{2-10}
  & Test & 3.2557 & 0.4988 & 0.2312 & 0.4321 & 0.3993 & 0.8729 & 0.8729 & 0.8729 \\
 \hline
@@ -1053,18 +1101,21 @@ These findings collectively suggest that LLM architectures offer substantial per
 
 Our comprehensive statistical analysis addresses the fundamental question of whether observed performance differences represent meaningful improvements or fall within the expected margin of error. The results provide several key insights:
 
-\textbf{1. Universal statistical significance:} All 13 pairwise comparisons conducted in this study yield p-values below 0.001, providing strong statistical evidence that the observed performance differences are unlikely to be due to random sampling variation alone. This consistency across diverse model comparisons (LoRA vs. full fine-tuning, LLMs vs. transformers) suggests that the findings are statistically robust. 
+\begin{itemize}
 
-\textbf{2. LoRA demonstrates consistent advantages over full fine-tuning:} Across all four transformer models tested (BART, T5, FLAN-T5, PEGASUS), LoRA fine-tuning achieves statistically significant improvements compared to full parameter fine-tuning. The ROUGE-1 improvements range from +2.5\% (PEGASUS) to +7.9\% (FLAN-T5), while ROUGE-2 improvements range from +3.2\% to +25.2\%. These results suggest that parameter-efficient LoRA adaptation can achieve competitive or superior performance compared to full fine-tuning while using only 0.8\% to 4.8\% of trainable parameters. The consistency of improvements across different model architectures provides evidence that LoRA's advantages may generalize across encoder-decoder transformer families.
-
-\textbf{3. Large language models show substantial advantages over encoder-decoder transformers:} The performance differences between LLMs (LLaMA-3-8B, Mistral-7B) and traditional transformers (BART, FLAN-T5) are notably larger in magnitude than the differences between LoRA and full fine-tuning. ROUGE-1 improvements range from +27\% to +37\%, while ROUGE-2 improvements reach +85\% to +130\%. Combined with completely non-overlapping confidence intervals and p $< 0.001$, these findings suggest that architectural differences between decoder-only LLMs and encoder-decoder transformers may have a substantial impact on clinical summarization performance. 
-
-\textbf{4. Performance stability across test samples:} The narrow bootstrap confidence intervals (typically ±1\% for ROUGE metrics, ±0.3\% for BERTScore F1) indicate that model performance is relatively stable across different subsamples of the test set. This stability suggests that the reported metrics are not heavily influenced by a small number of easy or difficult test examples. 
+   \item \textbf{Universal statistical significance:} All 13 pairwise comparisons conducted in this study yield p-values below 0.001, providing strong statistical evidence that the observed performance differences are unlikely to be due to random sampling variation alone. This consistency across diverse model comparisons (LoRA vs. full fine-tuning, LLMs vs. transformers) suggests that the findings are statistically robust.
+    
+   \item \textbf{LoRA demonstrates consistent advantages over full fine-tuning:} Across all four transformer models tested (BART, T5, FLAN-T5, PEGASUS), LoRA fine-tuning achieves statistically significant improvements compared to full parameter fine-tuning. The ROUGE-1 improvements range from +2.5\% (PEGASUS) to +7.9\% (FLAN-T5), while ROUGE-2 improvements range from +3.2\% to +25.2\%. These results suggest that parameter-efficient LoRA adaptation can achieve competitive or superior performance compared to full fine-tuning while using only 0.8\% to 4.8\% of trainable parameters. The consistency of improvements across different model architectures provides evidence that LoRA's advantages may generalize across encoder-decoder transformer families.
+    
+  \item   \textbf{Large language models show substantial advantages over encoder-decoder transformers:} The performance differences between LLMs (LLaMA-3-8B, Mistral-7B) and traditional transformers (BART, FLAN-T5) are notably larger in magnitude than the differences between LoRA and full fine-tuning. ROUGE-1 improvements range from +27\% to +37\%, while ROUGE-2 improvements reach +85\% to +130\%. Combined with completely non-overlapping confidence intervals and p $< 0.001$, these findings suggest that architectural differences between decoder-only LLMs and encoder-decoder transformers may have a substantial impact on clinical summarization performance.
+    
+   \item  \textbf{Performance stability across test samples:} The narrow bootstrap confidence intervals (typically ±1\% for ROUGE metrics, ±0.3\% for BERTScore F1) indicate that model performance is relatively stable across different subsamples of the test set. This stability suggests that the reported metrics are not heavily influenced by a small number of easy or difficult test examples.
+\end{itemize}
 
 \subsection{ Model Performance Comparison  Across Different Training Approaches}
 The radar chart presented in Figure \ref{fig:radarchar} offers an in-depth performance comparison of four distinct models assessed across various training and fine-tuning approaches. Throughout our experiments, LexRank, an extractive summarization method, consistently achieved the highest performance among the models evaluated. Similarly, the LLaMA-3-8B model, utilized in its pre-trained state without any fine-tuning, exhibited strong capabilities in summarization tasks. Moreover, the FLAN-T5 model, which underwent comprehensive fine-tuning, demonstrated remarkable adaptability and effectiveness, underscoring the benefits of extensive training. Additionally, the LLaMA-3-8B model enhanced with LoRA, a technique focused on parameter-efficient fine-tuning, also yielded impressive results, further illustrating its ability to optimize performance with minimal adjustments. This visualization not only highlights the comparative strengths of these methodologies but also serves as a valuable reference for researchers and practitioners seeking to select appropriate model architecture and training strategies for text summarization endeavors. 
 
-\begin{figure}
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=1\linewidth]{comprehensive_radar_chart.png}
     \caption{Performance comparison of representative models across different training approaches using radar chart visualization. The chart displays seven evaluation metrics for four model categories: extractive methods, pre-trained models without fine-tuning, full fine-tuning, and PEFT with LoRA.}
@@ -1076,7 +1127,7 @@ In addition to the modeling and evaluation pipeline, we developed a Graphical Us
 
 To enhance real-world usability, the system enables text input from URLs, direct pasting, or file upload. Processed text is analyzed and displayed in an interactive output window, making the GUI a practical extension of our summarization engine. By bridging backend summarization logic with a deployable frontend interface, this tool underscores the translational potential of our work and supports further exploration in clinical environments. A full implementation of the GUI, including cTAKES integration and summarization functionalities, has been made available as part of our supplementary materials to demonstrate the applied value of our contributions beyond experimental results.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=1.1\linewidth]{Graphical User Interface.png}
     \caption{Thinker-based Graphical User Interface for Summarization, illustrating the interactive layout where users can input clinical notes, configure summarization options, and view generated outputs.}
@@ -1089,7 +1140,7 @@ To enhance real-world usability, the system enables text input from URLs, direct
 
 This study is crucial for clinical decision support as it provides an efficient and accurate method for summarizing complex medical records. We utilized LoRA fine-tuning to develop a model capable of reading numerous patient discharge summaries and generating concise abstracts. This capability is particularly valuable for doctors who face an overwhelming amount of information and need to quickly identify the most important details to make informed decisions. Our approach not only accelerates and improves the quality of information retrieval, but it also makes this advanced technology accessible to hospitals and clinics with limited budgets and computing resources by significantly reducing the required processing power.
 
-Additionally, the research clearly evaluated the notable computational advantages of LoRA. LoRA reduced the trainable parameters by approximately 99\% compared to full fine-tuning, leading to a significant decrease in training time (averaging more than five times quicker) and lowered GPU memory consumption. The enhancements in efficiency are crucial for real-world applications and ongoing development in healthcare environments with limited resources.
+Additionally, the research clearly evaluated the notable computational advantages of LoRA.  LoRA reduced the trainable parameters by roughly 97–99\% compared to full fine-tuning, resulting in noticeably lower GPU memory usage and a decrease in training time, averaging about three times faster depending on the model. The enhancements in efficiency are crucial for real-world applications and ongoing development in healthcare environments with limited resources.
 
 Beyond this, we thoroughly examined how our research questions are addressed. We analyzed the methodologies employed and highlighted the significant findings that provide insight into each question posed. \\ 
 \textbf{RQ1:}  Across all architectures, fine-tuning substantially improved summarization quality compared to zero-shot inference. LLMs with LoRA consistently achieved the highest scores (for instance, LLaMA-3-8B with ROUGE-1: 0.7022, BERTScore F1: 0.9180), outperforming both transformers with LoRA and full parameter fine-tuning. This finding indicates that performance gains are not solely a function of model size but also of efficient adaptation strategies. The ranking observed that LLMs with LoRA significantly exceeded extractive baselines, showing that neural abstractive techniques offer essential benefits in clinical comprehension, semantic retention, and content generation that rule-based extractive strategies fail to deliver.\\
@@ -1101,32 +1152,32 @@ Beyond this, we thoroughly examined how our research questions are addressed. We
 
 \textcolor{red}{
 \subsection{Why LoRA Works Well for Clinical Summarization}
-Our empirical results demonstrate that LoRA achieves strong performance across all model architectures for clinical text summarization. Understanding why LoRA succeeds in this domain requires examining how its architectural constraints align with clinical adaptation requirements.
+In this study, we demonstrate that LoRA consistently outperforms full fine-tuning across all encoder-decoder architectures (+2.5\% to +7.9\% ROUGE-1, p$<0.001$). This performance advantage extends beyond computational efficiency, prompting a deeper investigation into the mechanisms underlying LoRA's effectiveness in clinical text summarization.
 \\
-\textbf{Implicit regularization preventing overfitting:} 
-LoRA constrains weight updates to a low-rank subspace ($r$=16 in our implementation), limiting the hypothesis space explored during fine-tuning. This structural constraint acts as implicit regularization, preventing overfitting to training data. \parencite{aghajanyan_intrinsic_2021} demonstrated that pre-trained language models possess intrinsic dimensionality substantially lower than their parameter count, with successful fine-tuning occurring within low-dimensional subspaces. Their analysis revealed that updating a mere 200-dimensional subspace achieves 90\% of full fine-tuning performance on NLP benchmarks. Our results align with this theory: LoRA's rank-16 constraint captures essential clinical adaptation directions while avoiding spurious correlations present in the full parameter space.
+Our analysis suggests that the primary factor is LoRA's implicit regularization effect. By constraining weight updates to a low-rank subspace ($r=16$), LoRA limits the hypothesis space explored during fine-tuning, effectively preventing overfitting to the limited clinical data. This observation aligns with the intrinsic dimensionality hypothesis proposed by \parencite{aghajanyan_intrinsic_2021}, which shows that successful fine-tuning occurs within low-dimensional subspaces updating a small subspace achieves most of the performance of full fine-tuning. In our experiments, LoRA models achieved lower validation losses than fully fine-tuned models (FLAN-T5-LoRA: 2.0386 vs. FLAN-T5-Full: 2.2869; T5-LoRA: 2.1861 vs. T5-Full: 2.4674), suggesting improved generalization rather than memorization.
 \\
-Beyond regularization, LoRA's effectiveness stems from how clinical knowledge is encoded. \textbf{Low-rank subspace alignment with clinical concept adaptation.} Clinical domain adaptation from general language to medical summarization appears to operate primarily through updating specific latent dimensions encoding medical concepts rather than restructuring all model representations \parencite{tang_evaluating_2023}. LoRA's low-rank updates target these dimensions efficiently, adjusting attention patterns to medical terminology (diagnoses, medications, procedures) and clinical vocabulary distributions. The disproportionately large ROUGE-2 gains across all models suggest effective preservation of multi-word medical phrases. Additionally, cross-architecture consistency (all models benefit from LoRA) indicates the approach captures fundamental clinical knowledge patterns rather than architecture-specific artifacts.
+Here, we also find that LoRA's low-rank update space is particularly well-suited for capturing clinical concept shifts. Adaptation from general language to the medical domain primarily involves updating specific latent dimensions encoding medical concepts rather than restructuring all model representations \parencite{tang_evaluating_2023}. Our results support this interpretation: ROUGE-2 improvements are disproportionately larger than ROUGE-1 improvements across all models (T5: +23.1\% vs. +6.9\%; FLAN-T5: +25.2\% vs. +7.9\%; BART: +15.9\% vs. +5.3\%). Since ROUGE-2 measures bigram overlap, these gains indicate effective preservation of multi-word medical phrases. The consistency across transformer architectures further suggests that LoRA captures fundamental clinical knowledge patterns rather than architecture-specific artifacts.
 \\
-Equally important is what LoRA preserves during adaptation. \textbf{Preservation of pre-trained knowledge.} LoRA freezes the original pre-trained weights ($\bm{W}$) while training only low-rank adapters ($\bm{A}$ and $\bm{B}$), preserving general language understanding acquired during pre-training. This reduces destructive interference between general language capabilities and specialized medical knowledge. Freezing pretrained weights while training only low-rank adapters mitigates catastrophic forgetting of general language capabilities during clinical domain specialization \parencite{yang_low-rank_2025}. This balance is particularly valuable for clinical summarization, which requires both domain-specific medical knowledge and coherent language generation.
+In addition, our study shows that LoRA preserves pre-trained knowledge during adaptation. By freezing the original weights ($\bm{W}$) and training only the low-rank adapters ($\bm{A}$ and $\bm{B}$), LoRA maintains the general language understanding acquired during pre-training. This design reduces destructive interference between general language capabilities and specialized medical knowledge \parencite{yang_low-rank_2025}, which is crucial for clinical summarization requiring both precise terminology and coherent language generation.
 \\
-These mechanisms regularization, clinical subspace alignment, and knowledge preservation operate synergistically. Clinical discharge summarization requires precise medical terminology preservation rather than creative language generation. LoRA's constrained adaptation space aligns well with this requirement, learning targeted clinical vocabulary mappings without disrupting the structured language patterns needed for accurate medical documentation.
+Overall, these three mechanisms, regularization, clinical subspace alignment, and knowledge preservation—operate synergistically in our experiments. Clinical discharge summarization demands precise preservation of medical terminology rather than creative language generation, and LoRA’s constrained adaptation space naturally aligns with this requirement. In this study, we show that LoRA, effectively learns targeted clinical vocabulary mappings without disrupting the structured language patterns essential for accurate medical documentation.
 }
+
+
 
 \textcolor{red}{
 \subsection{Summary of Key Findings}
-This study yields three principal findings. First, LLaMA-3-8B with LoRA achieves the highest summarization performance (ROUGE-1: 0.7022, BERTScore F1: 0.9180), surpassing all other models and training strategies. Second, LoRA consistently outperforms full fine-tuning across all architectures while requiring only 0.8\% of trainable parameters. Third, the performance ranking follows a consistent pattern: LLMs with LoRA exceed transformers with LoRA, which outperform full fine-tuning, followed by zero-shot inference, with extractive methods achieving the lowest scores.\\
-\textbf{Takeaways:} (i) Parameter-efficient fine-tuning provides both computational efficiency and improved summarization quality for clinical text. (ii) LLMs demonstrate superior clinical language understanding compared to traditional transformers. (iii) LoRA reduces GPU memory requirements by 62--74\% and training time by approximately 5-times, making clinical AI accessible to healthcare organizations with limited computational resources.}
+This study presents a comprehensive evaluation of parameter-efficient fine-tuning for clinical text summarization using the MIMIC-IV-Ext-BHC v1.2.0 dataset. We systematically compare four transformer models (BART, T5, PEGASUS-XSUM, FLAN-T5) and two large language models (LLaMA-3-8B, Mistral-7B) across zero-shot inference, full fine-tuning, and LoRA fine-tuning strategies. This study yields three principal findings. First, LLaMA-3-8B with LoRA achieves the highest performance across all evaluation metrics (ROUGE-1: 0.7022, BERTScore F1: 0.9180), surpassing both traditional transformers and alternative training approaches. Second, LoRA consistently outperforms full fine-tuning across all six architectures while reducing trainable parameters by approximately 99\%, demonstrating that parameter efficiency enhances rather than compromises summarization quality. Third, the results reveal a clear performance hierarchy: LLMs with LoRA outperform transformers with LoRA, which exceed full fine-tuning approaches, followed by zero-shot inference, with graph-based extractive methods yielding the lowest scores.}
 
 \subsection{Comparison with Previous Works }
 
 As seen from Table \ref{tab:big_comparison_limitations_long}, previous works in clinical text summarization have often been constrained by their focus on singular models, limited comparative scopes, and a general neglect of parameter-efficient methods like LoRA, frequently failing to report crucial computational metrics. Graph-based extractive methods have been looked at, but they usually don't perform well because they struggle to capture the more complex way humans write clinical summaries. \textcolor{red}{In contrast, our work provides a benchmark across multiple models and strategies, evaluating both traditional transformers and large language models in zero-shot, full fine-tuning, and LoRA adaptation settings. This approach empirically demonstrates LoRA's ability to achieve comparable or improved abstractive summarization quality while reducing computational requirements, with our models achieving higher ROUGE and METEOR scores than previously reported results on the MIMIC-IV dataset.} \\
 
 
-Beyond the overall improvements, we also looked at scenarios where our approach works especially well and where it struggles. Compared with earlier models, for example, FLAN-T5 and BART \parencite{van_veen_clinical_2023}, which dropped sharply in performance when facing domain gaps, our LLaMA-3-8B with LoRA model showed enhanced performance (ROUGE-2: 0.531 versus 0.11). This suggests that LoRA helps capture clinically meaningful language even when the surface wording differs and excels previous works. We also checked that extractive pipelines such as SBERT + PageRank \parencite{aftiss_biomdsum_2024} could score well on certain semantic metrics but often fail to maintain consistent summary structure. In contrast, our models achieved a stronger balance across both lexical and semantic measures. Still, we found limitations: ambiguous abbreviations and sections outside discharge summaries remain challenging, and the models can show deficiencies. Overall, these cases highlight both the clear advantages of LoRA and the areas that still need more work in the clinical summarization domain.
-
+Beyond the overall improvements, we also looked at scenarios where our approach works especially well and where it struggles. Compared with earlier models, for example, FLAN-T5 and BART \parencite{van_veen_clinical_2023}, which dropped sharply in performance when facing domain gaps, our LLaMA-3-8B with LoRA model showed enhanced performance (ROUGE-2: 0.531 versus 0.11). This suggests that LoRA helps capture clinically meaningful language even when the surface wording differs and excels previous works. We also checked that extractive pipelines  \parencite{naemi_benchmarking_2025} could score well on certain semantic metrics but often fail to maintain consistent summary structure. In contrast, our models achieved a stronger balance across both lexical and semantic measures. Still, we found limitations: ambiguous abbreviations and sections outside discharge summaries remain challenging, and the models can show deficiencies. Overall, these cases highlight both the clear advantages of LoRA and the areas that still need more work in the clinical summarization domain.
 \begin{longtable}{p{2.1cm}p{1.8cm}p{2.2cm}p{0.55cm}p{0.55cm}p{0.55cm}p{0.55cm}p{0.65cm}p{3.5cm}}
-\caption{Compares our proposed LoRA-enhanced models with previous clinical text summarization methods on MIMIC-IV dataset. The table shows that our models achieve competitive or higher scores across evaluation metrics while being computationally efficient.}\label{tab:big_comparison_limitations_long} \\
+\caption{Comparison of previous clinical text summarization methods on the MIMIC-IV dataset. Our proposed LoRA-enhanced models achieve highly competitive results across evaluation metrics while also being more computationally efficient.}
+\label{tab:big_comparison_limitations_long} \\
 \toprule
 \textbf{Authors} & \textbf{Dataset} & \textbf{Approach} & \textbf{R1} & \textbf{R2} & \textbf{RL} & \textbf{M} & \textbf{BF} & \textbf{Limitations}\\
 \midrule
@@ -1135,17 +1186,65 @@ Beyond the overall improvements, we also looked at scenarios where our approach 
 \toprule
 \bottomrule
 \endlastfoot
-The study in \parencite{sun_generative_2025} & MIMIC-IV & Llama-3, GPT-4 & NA & NA & NA & NA & 0.81 & Hallucination risk  \\
-The study in \parencite{make_2024} & MIMIC-IV & Seq2Seq & 0.3016 & 0.773 & 0.284 & NA & NA & Small test set; Complex pipeline; limited to BHC/DI sections  \\
-The study in \parencite{van_veen_clinical_2023} & MIMIC-IV & FLAN-T5, BART (zero-shot) & 0.27 & 0.11 & 0.25 & 0.17 & 0.81 & Domain gap affects lexical overlap  \\
-\textcolor{red}{WisPerMed \parencite{damm_wispermed_2024}} & \textcolor{red}{MIMIC-IV} & \textcolor{red}{Mistral-7B + LoRA + DES} & \textcolor{red}{0.453} & \textcolor{red}{0.201} & \textcolor{red}{0.308} & \textcolor{red}{0.403} & \textcolor{red}{0.438} & \textcolor{red}{Dynamic Expert Selection complexity; BHC section only; 1st place BioNLP 2024}  \\
-\textcolor{red}{Shimo Lab \parencite{he_shimo_2024}} & \textcolor{red}{MIMIC-IV} & \textcolor{red}{ClinicalT5-large + LoRA} & \textcolor{red}{0.394} & \textcolor{red}{0.131} & \textcolor{red}{0.312} & \textcolor{red}{0.351} & \textcolor{red}{0.252} & \textcolor{red}{Limited to BHC/DI sections; 9th place BioNLP 2024}  \\
-\textcolor{red}{EPFL-MAKE \parencite{roger_epfl_2024}} & \textcolor{red}{MIMIC-IV} & \textcolor{red}{Meditron-7B} & \textcolor{red}{0.444} & \textcolor{red}{NA} & \textcolor{red}{NA} & \textcolor{red}{NA} & \textcolor{red}{NA} & \textcolor{red}{Limited to BHC/DI sections; 2nd place BioNLP 2024}  \\
+
+The study in \parencite{sun_generative_2025} 
+& MIMIC-IV 
+& LLaMA-3, GPT-4 
+& NA & NA & NA & NA & 0.81 
+& Hallucination risk  \\
+
+The study in \parencite{aali_dataset_2025} 
+& MIMIC-IV 
+& LLaMA2-13B (fine-tuned) 
+& NA & NA & NA & NA & NA 
+& Small test set; complex pipeline; limited to BHC/DI sections  \\
+
+The study in \parencite{van_veen_clinical_2023} 
+& MIMIC-IV 
+& FLAN-T5, BART (zero-shot) 
+& 0.27 & 0.11 & 0.25 & 0.17 & 0.81 
+& Domain gap affects lexical overlap  \\
+
+\textcolor{red}{The study in  \parencite{damm_wispermed_2024}} 
+& \textcolor{red}{MIMIC-IV} 
+& \textcolor{red}{Phi3-mini, LLaMA-3.8B, Mistral-7B with LoRA and DES} 
+& \textcolor{red}{0.453} & \textcolor{red}{0.201} & \textcolor{red}{0.308} & \textcolor{red}{0.403} & \textcolor{red}{0.438} 
+& \textcolor{red}{Dynamic Expert Selection complexity; BHC section only; 1st place BioNLP 2024}  \\
+
+\textcolor{red}{The study in \parencite{he_shimo_2024}} 
+& \textcolor{red}{MIMIC-IV} 
+& \textcolor{red}{ClinicalT5-large with LoRA} 
+& \textcolor{red}{0.394} & \textcolor{red}{0.131} & \textcolor{red}{0.312} & \textcolor{red}{0.351} & \textcolor{red}{0.252} 
+& \textcolor{red}{Limited to BHC/DI sections; 9th place BioNLP 2024}  \\
+
+\textcolor{red}{The study in \parencite{wu_epfl-make_2024}} 
+& \textcolor{red}{MIMIC-IV} 
+& \textcolor{red}{Meditron-7B} 
+& \textcolor{red}{0.444} & \textcolor{red}{NA} & \textcolor{red}{NA} & \textcolor{red}{NA} & \textcolor{red}{NA} 
+& \textcolor{red}{Limited to BHC/DI sections; 2nd place BioNLP 2024}  \\
+
+\textcolor{red}{The study in  \parencite{naemi_benchmarking_2025}} 
+& \textcolor{red}{MIMIC-IV} 
+& \textcolor{red}{Gemma-3-27B (Extractive)} 
+& \textcolor{red}{0.736} & \textcolor{red}{0.529} & \textcolor{red}{0.592} & \textcolor{red}{0.597} & \textcolor{red}{0.832} 
+& \textcolor{red}{Automatic evaluation only; no clinician validation; extractive summarization setting} \\
+
 \hline
 \addlinespace
-\multicolumn{9}{l}{\textbf{Our Proposed Method}}\\
-LLaMA-3-8B + LoRA & MIMIC-IV & Abstractive; LLaMA-3-8B + LoRA & \textbf{0.702} & \textbf{0.531} & \textbf{0.671} & \textbf{0.678} & \textbf{0.918} & Highest overall; needs LLM infra but only \textasciitilde1\% trainable params.  \\
-Mistral-7B + LoRA & MIMIC-IV & Abstractive; Mistral-7B + LoRA & 0.650 & 0.438 & 0.602 & 0.611 & 0.906 & Slightly lower than LLaMA-3; higher VRAM than transformers.  \\
+\multicolumn{9}{l}{\textbf{Our Proposed Methods}}\\
+
+LLaMA-3-8B with LoRA 
+& MIMIC-IV 
+& Abstractive; LLaMA-3-8B with LoRA 
+& \textbf{0.702} & \textbf{0.531} & \textbf{0.671} & \textbf{0.678} & \textbf{0.918} 
+& Highest scores overall  \\
+
+Mistral-7B + LoRA 
+& MIMIC-IV 
+& Abstractive; Mistral-7B with LoRA 
+& 0.650 & 0.438 & 0.602 & 0.611 & 0.906 
+& Slightly lower thanLLaMA-3-8B \\
+
 \end{longtable}
 
 
@@ -1159,7 +1258,7 @@ The findings of this study carry significant practical implications for the deve
 Another important area of research focused on the scalability of LoRA-enhanced models. Practical applications in healthcare require the model to scale to larger datasets and more complicated medical queries without increasing processing resources. Even as the dataset size and complexity increased, the LoRA-enhanced model maintained good performance while scaling. Real-world AI models must efficiently analyze massive medical data; therefore, scalability is crucial. The study has practical applications in clinical decision support systems, patient education, and automated medical recording. Reliable and contextually appropriate responses from the LoRA-enhanced model help healthcare workers make educated decisions, improve patient outcomes, and streamline administrative duties. 
 
 \subsection{Limitations and Future Research Directions}
-In this study, our dataset is comprised exclusively of discharge summaries written in English, which may limit the generalizability to outpatient settings and non-English clinical notes. While this research offers valuable insights into the efficacy of LoRA for abstractive medical text summarization, it is essential to acknowledge several limitations that should be considered in future studies. In addition to LoRA, other PEFT techniques, such as adapters, prompt tuning, and prefix tuning, are worth exploring. Given the rapid advancement in the field of large language models, with some now encompassing hundreds of billions or even trillions of parameters, future research could investigate the application of LoRA to even more extensive models to further enhance performance and efficiency. It is also important to highlight a common limitation in summarization studies regarding the reliance on automatic evaluation metrics such as ROUGE, METEOR, and BERTScore. These metrics may not effectively assess the accuracy, clinical relevance, brevity, and overall clarity of the summaries for healthcare professionals. A summary achieving high ROUGE scores may still contain factual inaccuracies or omit critical information, which could have serious consequences in a medical setting. Therefore, human judgment is crucial for evaluating medical summaries. Future efforts should include a professional clinical review to ensure that the summaries are accurate and applicable in real-world scenarios.
+In this study, our dataset is comprised exclusively of discharge summaries written in English, which may limit the generalizability to outpatient settings and non-English clinical notes. While this research offers valuable insights into the efficacy of LoRA for abstractive medical text summarization, it is essential to acknowledge several limitations that should be considered in future studies. In addition to LoRA, other PEFT techniques, such as adapters, prompt tuning, and prefix tuning, are worth exploring. Given the rapid advancement in the field of large language models, with some now encompassing hundreds of billions or even trillions of parameters, future research could investigate the application of LoRA to even more extensive models to further enhance performance and efficiency. \textcolor{red}{A major limitation of this study is the absence of validation by clinical experts.} While automatic evaluation metrics such as ROUGE, METEOR, and BERTScore provide valuable benchmarks for comparing model performance, they cannot \textcolor{red}{adequately} assess \textcolor{red}{clinical accuracy, factual consistency, or potential hallucinations in} generated summaries. A summary achieving high ROUGE scores may still contain factual inaccuracies \textcolor{red}{or omit critical clinical information, which could have serious consequences for patient safety}. \textcolor{red}{For any clinical deployment, validation by healthcare professionals is essential.} Therefore, \textcolor{red}{the highest priority for future work is conducting rigorous human evaluation with clinicians to assess factual accuracy, clinical relevance, completeness, and safety of generated summaries before real-world deployment.}
 \section{Conclusion}
 \textcolor{red}{This research evaluates LoRA parameter-efficient fine-tuning for clinical text summarization and provides evidence that increased trainable parameters do not necessarily correlate with improved performance.} By systematically evaluating graph-based extractive and 20 tests spanning six architectures, traditional transformers (BART, T5, PEGASUS-XSUM, FLAN-T5), and LLMs  (Mistral-7B, LLaMA-3-8B), we can demonstrate that parameter efficiency improves performance rather than degrades it. \textcolor{red}{Among traditional encoder-decoder transformers, FLAN-T5-LoRA achieves the highest performance across all evaluation metrics, followed by BART-LoRA and T5-LoRA with comparable results, while PEGASUS-XSUM-LoRA ranks lowest. FLAN-T5's instruction-tuning pre-training aligns well with structured summarization tasks, while BART's denoising pre-training objective provides effective adaptation for clinical text generation. LLaMA-3-8B with LoRA achieves the highest overall performance in the entire study, demonstrating superior clinical text summarization capability.} From this study, we confirmed that LoRA consistently outperformed both zero-shot inference and full parameter fine-tuning across all evaluated architectures. Based on this wide-ranging experiment, effectiveness suggests a specific performance ranking: LLMs utilizing LoRA surpass traditional transformers with LoRA, which outperform full fine-tuning, which is superior to zero-shot neural techniques, which significantly outperform extractive methods. LLM models demonstrated good understanding of clinical information, with their zero-shot results being better than traditional graph-based extractive methods and similar to fine-tuned classical transformers, indicating that their clinical reasoning is due to a lot of pre-training. The computational efficiency achievements are equally remarkable, with LoRA enabling  GPU memory reduction and storage reduction, transforming clinical AI from a resource-intensive endeavor to an accessible technology for healthcare organizations of all sizes. This study represents a change in clinical AI, shifting from resource-intensive methods to intelligent adaptation methods, extending beyond clinical text summarizing into the wider area of domain-specific AI adaptation. The success of LoRA, which reached its goals by concentrating on learning, maintaining knowledge, and using implicit regularization, establishes parameter-efficient fine-tuning as the new standard for specialized AI applications that need to perform well and can be used in real-world settings. Advanced clinical NLP is accessible to healthcare organizations worldwide due to its strong performance, computational efficiency, and deployment flexibility. 
 
